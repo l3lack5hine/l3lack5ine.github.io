@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <div class="animated-rainbow">Animated Rainbow Gradient</div>
     <title>คำนวณเป้าหมายผลผลิตตามประสิทธิภาพ</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
@@ -36,6 +35,20 @@
             display: block;
             margin-bottom: 3px;
             font-size: 16px;
+        }
+         @keyframes smooth-blink-effect {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.3; /* ลดความโปร่งใสลง แต่ยังพอมองเห็น */
+            }
+        }
+
+        .smooth-blinking-text {
+            animation-name: smooth-blink-effect;
+            animation-duration: 1.5s;
+            animation-iteration-count: infinite;
         }
     </style>
 </head>
@@ -105,7 +118,7 @@
             const totalNormalTime = (morningPeople * 4 * 60) + (afternoonPeople * 4 * 60);
             const totalOtTime = (otPeople * otHours * 60);
             const totalTime = totalNormalTime + totalOtTime;
-
+            const totalTimehr = totalTime / 60
             // คำนวณ Expected Output at 100% EFF (ผลผลิตที่คาดหวังหากประสิทธิภาพเป็น 100%)
             const expectedOutputAt100Eff = totalTime / sam;
 
@@ -115,10 +128,11 @@
             // แสดงผลลัพธ์
             document.getElementById('result').innerHTML = `
                 <h3>ผลลัพธ์:</h3>
-                <p>เวลารวมที่ใช้ทำงานทั้งหมด: ${totalTime.toFixed(0)} / 60 ชั่วโมง</p>
+                <p>เวลารวมที่ใช้ทำงานทั้งหมด: ${totalTimehr.toFixed(0)} ชั่วโมง</p>
                 <p>ผลผลิตที่คาดหวัง (เมื่อประสิทธิภาพ 100%): ${expectedOutputAt100Eff.toFixed(2)} ตัว</p>
                 <p>เป้าหมายประสิทธิภาพที่ตั้งไว้: ${targetEff.toFixed(2)}%</p>
-                <p style="font-size: 1.2em;"><strong>จำนวนงานที่ต้องทำให้ได้: ${requiredOutput.toFixed(2)} ตัว</strong></p>
+                <p style="font-size: 1.2em;"><strong>จำนวนงานที่ต้องทำ: ${requiredOutput.toFixed(2)} ตัว</strong></p>
+                <span style="color: red;" class="smooth-blinking-text" font-weight: bold;><strong> ***งานที่ต้องทำใส่ค่าเผื่อใว้แล้ว สามารถทำตามจำนวนผลลัพธ์ที่ได้ ได้เลย*** </strong></span>
             `;
         }
     </script>
