@@ -101,7 +101,39 @@
             if (sam <= 0) {
                  document.getElementById('result').innerHTML = `
                     <h3 style="color: red;">ข้อผิดพลาด:</h3>
-                    <p>ค่า SAM Style ต้องมากกว่า 0</p>
+                    <p class="smooth-blinking-text">ค่า SAM Style ต้องมากกว่า 0</p>
+                `;
+                return;
+            }
+            
+            if (morningPeople <= -0) {
+                 document.getElementById('result').innerHTML = `
+                    <h3 style="color: red;">ข้อผิดพลาด:</h3>
+                    <p class="smooth-blinking-text">จำนวนคนผิดผลาด กรุณาใส่ข้อมูลให้ถูกต้อง</p>
+                `;
+                return;
+            }
+
+            if (afternoonPeople <= -0) {
+                 document.getElementById('result').innerHTML = `
+                    <h3 style="color: red;">ข้อผิดพลาด:</h3>
+                    <p class="smooth-blinking-text">จำนวนคนผิดผลาด กรุณาใส่ข้อมูลให้ถูกต้อง 0</p>
+                `;
+                return;
+            }
+
+            if (otPeople <= -0) {
+                 document.getElementById('result').innerHTML = `
+                    <h3 style="color: red;">ข้อผิดพลาด:</h3>
+                    <p class="smooth-blinking-text">จำนวนคนผิดผลาด กรุณาใส่ข้อมูลให้ถูกต้อง</p>
+                `;
+                return;
+            }
+
+            if (otHours <= -0) {
+                 document.getElementById('result').innerHTML = `
+                    <h3 style="color: red;">ข้อผิดพลาด:</h3>
+                    <p class="smooth-blinking-text">คุณใส่ชั่วโมง O.T. ผิด กรุณาใส่ให้ถูกต้อง</p>
                 `;
                 return;
             }
@@ -109,7 +141,7 @@
             if (targetEff < 0) {
                  document.getElementById('result').innerHTML = `
                     <h3 style="color: red;">ข้อผิดพลาด:</h3>
-                    <p>เปอร์เซ็นต์ประสิทธิภาพที่ต้องการต้องไม่ติดลบ</p>
+                    <p class="smooth-blinking-text">เปอร์เซ็นต์ประสิทธิภาพที่ต้องการต้องไม่ติดลบ</p>
                 `;
                 return;
             }
