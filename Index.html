@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>คำนวณประสิทธิภาพการผลิต</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-เพิ่มบรรทัดนี้-->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            margin: 0; /* เพิ่มเพื่อให้เต็มจอในบางกรณี */
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            padding: 15px; /* เพิ่ม padding ใน container */
+        }
+        input, button { /* รวม button เข้ามาด้วย */
+            margin: 8px 0; /* ปรับ margin */
+            width: 100%; /* ทำให้ input และ button กว้างเต็ม container */
+            padding: 10px; /* เพิ่ม padding ภายใน input และ button */
+            box-sizing: border-box; /* ทำให้ padding และ border ไม่เพิ่มขนาดของ element */
+            font-size: 16px; /* เพิ่มขนาด font ให้อ่านง่ายขึ้น */
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f0f0f0;
+            border-radius: 5px;
+        }
+        h1 {
+            font-size: 24px; /* ปรับขนาด H1 ให้เหมาะสม */
+            text-align: center; /* จัดกลางชื่อเรื่อง */
+        }
+        label {
+            display: block; /* ทำให้ label อยู่บรรทัดเดียวกับ input */
+            margin-bottom: 3px; /*ลดช่องว่างใต้ label*/
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>คำนวณประสิทธิภาพรายวัน</h1>
+        <form id="calcForm">
+            <label for="sam">SAM Style :</label> <input type="number" step="0.01" id="sam" required><br>
+
+            <label for="normalPeople">จำนวนคนทำงานปกติ (8 ชม.):</label>
+            <input type="number" id="normalPeople" required><br>
+
+            <label for="otPeople">จำนวนคนทำงาน OT:</label>
+            <input type="number" id="otPeople" required><br>
+
+            <label for="otHours">ชั่วโมง OT/วัน (ใส่เฉพาะ ชม.โอที):</label>
+            <input type="number" id="otHours" required><br>
+
+            <label for="actual">ผลผลิตที่เย็บได้/วัน:</label>
+            <input type="number" id="actual" required><br>
+
+            <button type="button" onclick="calculate()" style="margin-top:10px;">คำนวณ</button>
+        </form>
+
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        function calculate() {
+            const sam = parseFloat(document.getElementById('sam').value);
+            const normalPeople = parseFloat(document.getElementById('normalPeople').value);
+            const otPeople = parseFloat(document.getElementById('otPeople').value);
+            const otHours = parseFloat(document.getElementById('otHours').value);
+            const actual = parseFloat(document.getElementById('actual').value);
+
+            // ตรวจสอบว่า input ทั้งหมดมีค่าหรือไม่
+            if (isNaN(sam) || isNaN(normalPeople) || isNaN(otPeople) || isNaN(otHours) || isNaN(actual)) {
+                document.getElementById('result').innerHTML = `
+                    <h3 style="color: red;">ข้อผิดพลาด:</h3>
+                    <p>กรุณากรอกข้อมูลให้ครบทุกช่องด้วยตัวเลขที่ถูกต้อง</p>
+                `;
+                return; // หยุดการทำงานถ้าข้อมูลไม่ครบ
+            }
+
+
+            // คำนวณ Total Time (นาที)
+            const totalTime = (normalPeople * 8 * 60) + (otPeople * otHours * 60);
+
+            // คำนวณ Expected Output
+            const expected = totalTime / sam;
+
+            // คำนวณประสิทธิภาพ (%EFF)
+            let eff = 0;
+            if (expected > 0) { //ป้องกันการหารด้วยศูนย์ถ้า expected เป็น 0
+                 eff = (actual / expected) * 100;
+            }
+
+
+            // แสดงผลลัพธ์
+            document.getElementById('result').innerHTML = `
+                <h3>ผลลัพธ์:</h3>
+                <p>ประสิทธิภาพ: <strong>${eff.toFixed(2)}%</strong></p>
+                <h3>__ตัวอย่าง__</h3>
+                <p>ประสิทธิภาพ:อยู่ในช่วง 65.39 % ควรเพิ่มงานขึ้นเป็น 65.50%</p>
+                <p>ประสิทธิภาพ:อยู่ในช่วง 65.79 % ควรเพิ่มงานขึ้นเป็น 66.00%</p>
+            `;
+        }
+    </script>
+</body>
+</html>
