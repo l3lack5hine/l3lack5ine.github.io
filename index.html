@@ -1,25 +1,25 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>คำนวณประสิทธิภาพการผลิต</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-เพิ่มบรรทัดนี้-->
+    <title>คำนวณเป้าหมายผลผลิตตามประสิทธิภาพ</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body {
             font-family: Arial, sans-serif;
             padding: 20px;
-            margin: 0; /* เพิ่มเพื่อให้เต็มจอในบางกรณี */
+            margin: 0;
         }
         .container {
             max-width: 600px;
             margin: auto;
-            padding: 15px; /* เพิ่ม padding ใน container */
+            padding: 15px;
         }
-        input, button { /* รวม button เข้ามาด้วย */
-            margin: 8px 0; /* ปรับ margin */
-            width: 100%; /* ทำให้ input และ button กว้างเต็ม container */
-            padding: 10px; /* เพิ่ม padding ภายใน input และ button */
-            box-sizing: border-box; /* ทำให้ padding และ border ไม่เพิ่มขนาดของ element */
-            font-size: 16px; /* เพิ่มขนาด font ให้อ่านง่ายขึ้น */
+        input, button {
+            margin: 8px 0;
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            font-size: 16px;
         }
         .result {
             margin-top: 20px;
@@ -28,27 +28,28 @@
             border-radius: 5px;
         }
         h1 {
-            font-size: 24px; /* ปรับขนาด H1 ให้เหมาะสม */
-            text-align: center; /* จัดกลางชื่อเรื่อง */
+            font-size: 24px;
+            text-align: center;
         }
         label {
-            display: block; /* ทำให้ label อยู่บรรทัดเดียวกับ input */
-            margin-bottom: 3px; /*ลดช่องว่างใต้ label*/
+            display: block;
+            margin-bottom: 3px;
             font-size: 16px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>คำนวณประสิทธิภาพรายวัน</h1>
+        <h1>คำนวณเป้าหมายผลผลิตรายวัน</h1>
         <form id="calcForm">
-            <label for="sam">SAM Style :</label> <input type="number" step="0.01" id="sam" required><br>
+            <label for="sam">SAM Style (นาที/ชิ้น):</label>
+            <input type="number" step="0.01" id="sam" required><br>
 
-            <label for="normalPeople">จำนวนคนทำงานปกติ (เช้า 4 ชม.):</label>
-            <input type="number" id="normalPeople1" required><br>
+            <label for="morningPeople">จำนวนคนทำงานช่วงเช้า (4 ชม.):</label>
+            <input type="number" id="morningPeople" required><br>
 
-            <label for="normalPeople">จำนวนคนทำงานปกติ (บ่าย 4 ชม.):</label>
-            <input type="number" id="normalPeople2" required><br>
+            <label for="afternoonPeople">จำนวนคนทำงานช่วงบ่าย (4 ชม.):</label>
+            <input type="number" id="afternoonPeople" required><br>
 
             <label for="otPeople">จำนวนคนทำงาน OT:</label>
             <input type="number" id="otPeople" required><br>
@@ -56,8 +57,8 @@
             <label for="otHours">ชั่วโมง OT/วัน (ใส่เฉพาะ ชม.โอที):</label>
             <input type="number" id="otHours" required><br>
 
-            <label for="actual">ผลผลิตที่เย็บได้/วัน:</label>
-            <input type="number" id="actual" required><br>
+            <label for="targetEff">เปอร์เซ็นต์ประสิทธิภาพที่ต้องการ (%):</label>
+            <input type="number" step="0.01" id="targetEff" required><br>
 
             <button type="button" onclick="calculate()" style="margin-top:10px;">คำนวณ</button>
         </form>
@@ -68,42 +69,55 @@
     <script>
         function calculate() {
             const sam = parseFloat(document.getElementById('sam').value);
-            const normalPeople1 = parseFloat(document.getElementById('normalPeople1').value);
-            const normalPeople2 = parseFloat(document.getElementById('normalPeople2').value)
+            const morningPeople = parseFloat(document.getElementById('morningPeople').value);
+            const afternoonPeople = parseFloat(document.getElementById('afternoonPeople').value);
             const otPeople = parseFloat(document.getElementById('otPeople').value);
             const otHours = parseFloat(document.getElementById('otHours').value);
-            const actual = parseFloat(document.getElementById('actual').value);
+            const targetEff = parseFloat(document.getElementById('targetEff').value);
 
             // ตรวจสอบว่า input ทั้งหมดมีค่าหรือไม่
-            if (isNaN(sam) || isNaN(normalPeople) || isNaN(otPeople) || isNaN(otHours) || isNaN(actual)) {
+            if (isNaN(sam) || isNaN(morningPeople) || isNaN(afternoonPeople) || isNaN(otPeople) || isNaN(otHours) || isNaN(targetEff)) {
                 document.getElementById('result').innerHTML = `
                     <h3 style="color: red;">ข้อผิดพลาด:</h3>
                     <p>กรุณากรอกข้อมูลให้ครบทุกช่องด้วยตัวเลขที่ถูกต้อง</p>
                 `;
-                return; // หยุดการทำงานถ้าข้อมูลไม่ครบ
+                return;
             }
 
+            if (sam <= 0) {
+                 document.getElementById('result').innerHTML = `
+                    <h3 style="color: red;">ข้อผิดพลาด:</h3>
+                    <p>ค่า SAM Style ต้องมากกว่า 0</p>
+                `;
+                return;
+            }
+
+            if (targetEff < 0) {
+                 document.getElementById('result').innerHTML = `
+                    <h3 style="color: red;">ข้อผิดพลาด:</h3>
+                    <p>เปอร์เซ็นต์ประสิทธิภาพที่ต้องการต้องไม่ติดลบ</p>
+                `;
+                return;
+            }
 
             // คำนวณ Total Time (นาที)
-            const totalTime = (normalPeople1 * 4 * 60) + (normalPeople2 *4 *60) + (otPeople * otHours * 60);
+            const totalNormalTime = (morningPeople * 4 * 60) + (afternoonPeople * 4 * 60);
+            const totalOtTime = (otPeople * otHours * 60);
+            const totalTime = totalNormalTime + totalOtTime;
 
-            // คำนวณ Expected Output
-            const expected = totalTime / sam;
+            // คำนวณ Expected Output at 100% EFF (ผลผลิตที่คาดหวังหากประสิทธิภาพเป็น 100%)
+            const expectedOutputAt100Eff = totalTime / sam;
 
-            // คำนวณประสิทธิภาพ (%EFF)
-            let eff = 0;
-            if (expected > 0) { //ป้องกันการหารด้วยศูนย์ถ้า expected เป็น 0
-                 eff = (actual / expected) * 100;
-            }
-
+            // คำนวณ Required Output (จำนวนงานที่ต้องทำเพื่อให้ได้ตาม Target EFF%)
+            const requiredOutput = (targetEff / 100) * expectedOutputAt100Eff;
 
             // แสดงผลลัพธ์
             document.getElementById('result').innerHTML = `
                 <h3>ผลลัพธ์:</h3>
-                <p>ประสิทธิภาพ: <strong>${eff.toFixed(2)}%</strong></p>
-                <h3>__ตัวอย่าง__</h3>
-                <p>ประสิทธิภาพ:อยู่ในช่วง 65.39 % ควรเพิ่มงานขึ้นเป็น 65.50%</p>
-                <p>ประสิทธิภาพ:อยู่ในช่วง 65.79 % ควรเพิ่มงานขึ้นเป็น 66.00%</p>
+                <p>เวลารวมที่ใช้ทำงานทั้งหมด: ${totalTime.toFixed(0)} นาที</p>
+                <p>ผลผลิตที่คาดหวัง (เมื่อประสิทธิภาพ 100%): ${expectedOutputAt100Eff.toFixed(2)} ชิ้น</p>
+                <p>เป้าหมายประสิทธิภาพที่ตั้งไว้: ${targetEff.toFixed(2)}%</p>
+                <p style="font-size: 1.2em;"><strong>จำนวนงานที่ต้องทำให้ได้: ${requiredOutput.toFixed(2)} ชิ้น</strong></p>
             `;
         }
     </script>
