@@ -44,8 +44,11 @@
         <form id="calcForm">
             <label for="sam">SAM Style :</label> <input type="number" step="0.01" id="sam" required><br>
 
-            <label for="normalPeople">จำนวนคนทำงานปกติ (8 ชม.):</label>
-            <input type="number" id="normalPeople" required><br>
+            <label for="normalPeople">จำนวนคนทำงานปกติ (เช้า 4 ชม.):</label>
+            <input type="number" id="normalPeople1" required><br>
+
+            <label for="normalPeople">จำนวนคนทำงานปกติ (บ่าย 4 ชม.):</label>
+            <input type="number" id="normalPeople2" required><br>
 
             <label for="otPeople">จำนวนคนทำงาน OT:</label>
             <input type="number" id="otPeople" required><br>
@@ -65,7 +68,8 @@
     <script>
         function calculate() {
             const sam = parseFloat(document.getElementById('sam').value);
-            const normalPeople = parseFloat(document.getElementById('normalPeople').value);
+            const normalPeople1 = parseFloat(document.getElementById('normalPeople1').value);
+            const normalPeople2 = parseFloat(document.getElementById('normalPeople2').value)
             const otPeople = parseFloat(document.getElementById('otPeople').value);
             const otHours = parseFloat(document.getElementById('otHours').value);
             const actual = parseFloat(document.getElementById('actual').value);
@@ -81,7 +85,7 @@
 
 
             // คำนวณ Total Time (นาที)
-            const totalTime = (normalPeople * 8 * 60) + (otPeople * otHours * 60);
+            const totalTime = (normalPeople + normalPeople2 * 8 * 60) + (otPeople * otHours * 60);
 
             // คำนวณ Expected Output
             const expected = totalTime / sam;
