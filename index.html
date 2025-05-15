@@ -109,7 +109,7 @@
             const expectedOutputAt100Eff = totalTime / sam;
 
             // คำนวณ Required Output (จำนวนงานที่ต้องทำเพื่อให้ได้ตาม Target EFF%)
-            const requiredOutput = (targetEff / 100) * (expectedOutputAt100Eff + 0.05);
+            const requiredOutput = (targetEff + 0.05) / 100 * (expectedOutputAt100Eff);
 
             // แสดงผลลัพธ์
             document.getElementById('result').innerHTML = `
