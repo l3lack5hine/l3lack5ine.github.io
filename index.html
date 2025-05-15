@@ -116,21 +116,26 @@
 
             // คำนวณ Total Time (นาที)
             const totalNormalTime = (morningPeople * 4 * 60) + (afternoonPeople * 4 * 60);
+            const totalNormalTime2 = (morningPeople * 4 * 60) + (afternoonPeople * 2 * 60);
             const totalOtTime = (otPeople * otHours * 60);
             const totalTime = totalNormalTime + totalOtTime;
             const totalTimehr = totalTime / 60
             // คำนวณ Expected Output at 100% EFF (ผลผลิตที่คาดหวังหากประสิทธิภาพเป็น 100%)
             const expectedOutputAt100Eff = totalTime / sam;
+            const expectedOutputAt100Eff2 = totalNormalTime2 / sam; //คำนวนงานที่ต้องทำ 15.30น.
+
+
 
             // คำนวณ Required Output (จำนวนงานที่ต้องทำเพื่อให้ได้ตาม Target EFF%)
             const requiredOutput = (targetEff + 0.05) / 100 * (expectedOutputAt100Eff);
+            const requiredOutput2 = (targetEff + 0.05) / 100 * (expectedOutputAt100Eff2);
 
             // แสดงผลลัพธ์
             document.getElementById('result').innerHTML = `
                 <h3>ผลลัพธ์:</h3>
-                <p>เวลารวมที่ใช้ทำงานทั้งหมด: ${totalTimehr.toFixed(0)} ชั่วโมง</p>
                 <p>ผลผลิตที่คาดหวัง (เมื่อประสิทธิภาพ 100%): ${expectedOutputAt100Eff.toFixed(2)} ตัว</p>
                 <p>เป้าหมายประสิทธิภาพที่ตั้งไว้: ${targetEff.toFixed(2)}%</p>
+                <p style="font-size: 1.2em;"><strong>จำนวนงานที่ต้องทำ 6 ขั่วโมง (15.30น.): ${requiredOutput2.toFixed(2)} ตัว</strong></p>
                 <p style="font-size: 1.2em;"><strong>จำนวนงานที่ต้องทำ: ${requiredOutput.toFixed(2)} ตัว</strong></p>
                 <span style="color: red;" class="smooth-blinking-text" font-weight: bold;><strong> ***งานที่ต้องทำใส่ค่าเผื่อใว้แล้ว สามารถทำตามจำนวนผลลัพธ์ที่ได้ ได้เลย*** </strong></span>
             `;
