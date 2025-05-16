@@ -1,36 +1,78 @@
 <!DOCTYPE html>
-<html>
+<html lang="th">
 <head>
     <meta charset="UTF-8">
-    <title>คำนวณเป้าหมายผลผลิตตามประสิทธิภาพ</title>
+    <title>เครื่องคำนวณเป้าหมายผลผลิต</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         /* --- Global Styles --- */
         body {
-            font-family: 'Arial', 'Helvetica Neue', sans-serif; /* เพิ่ม fallback fonts */
-            padding: 20px;
+            font-family: 'Arial', 'Helvetica Neue', sans-serif;
+            padding: 0; /* Remove padding for full-width navigation */
             margin: 0;
-            background-color: #f4f4f9; /* สีพื้นหลังอ่อนโยน */
-            color: #333; /* สีตัวอักษรหลัก */
-            line-height: 1.6; /* เพิ่มระยะห่างบรรทัดให้อ่านง่าย */
+            background-color: #f4f4f9;
+            color: #333;
+            line-height: 1.6;
         }
 
-        /* --- Container --- */
+        /* --- Navigation --- */
+        .navigation-tabs {
+            display: flex;
+            justify-content: center;
+            background-color: #343a40; /* Dark background for tabs */
+            padding: 10px 0;
+            margin-bottom: 20px;
+        }
+        .navigation-tabs button {
+            background-color: #495057; /* Button color */
+            color: white;
+            padding: 12px 25px; /* Increased padding */
+            margin: 0 8px; /* Spacing between buttons */
+            border: none;
+            border-radius: 5px; /* Rounded corners */
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .navigation-tabs button:hover {
+            background-color: #007bff; /* Lighter blue on hover */
+        }
+        .navigation-tabs button.active {
+            background-color: #007bff; /* Blue for active tab */
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        /* --- Container (for calculator content) --- */
         .container {
-            max-width: 650px; /* เพิ่มความกว้างเล็กน้อย */
-            margin: 20px auto; /* ปรับ margin */
+            max-width: 750px;
+            margin: 20px auto;
             padding: 25px;
             background-color: #ffffff;
             border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* ปรับเงาให้ดูนุ่มนวลขึ้น */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
+        .initial-message-container { /* Specific styling for the initial message */
+             text-align:center;
+             padding: 40px 20px;
+        }
+
 
         /* --- Headings and Text --- */
         h1 {
-            font-size: 26px; /* ปรับขนาด font */
+            font-size: 26px;
             text-align: center;
-            color: #2c3e50; /* สีหัวข้อเข้มขึ้น */
+            color: #2c3e50;
             margin-bottom: 25px;
+        }
+        h2 {
+            font-size: 20px;
+            color: #007bff;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
         }
 
         label {
@@ -40,62 +82,87 @@
             font-weight: bold;
             color: #555;
         }
+        .input-hint {
+            font-size: 0.85em;
+            color: #666;
+            margin-top: -10px;
+            margin-bottom: 10px;
+        }
 
         /* --- Form Elements --- */
-        input[type="number"], 
-        button {
+        input[type="number"],
+        .calc-button { /* Use a class for calculator buttons for specific styling if needed */
             width: 100%;
             padding: 12px;
-            margin-bottom: 15px; /* ปรับ margin ด้านล่าง */
+            margin-bottom: 15px;
             box-sizing: border-box;
             font-size: 16px;
-            border: 1px solid #ddd; /* สีขอบอ่อนลง */
-            border-radius: 5px; /* ความโค้งมน */
+            border: 1px solid #ddd;
+            border-radius: 5px;
         }
 
         input[type="number"]:focus {
-            border-color: #007bff; /* เปลี่ยนสีขอบเมื่อ focus */
-            box-shadow: 0 0 5px rgba(0,123,255,0.25); /* เพิ่มเงาเมื่อ focus */
-            outline: none; /* เอา outline เริ่มต้นออก */
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0,123,255,0.25);
+            outline: none;
         }
 
-        button {
-            background-color: #007bff;
+        .calc-button { /* Specific styling for calculation buttons */
+            background-color: #17a2b8; /* Info blue */
             color: white;
             border: none;
             cursor: pointer;
-            transition: background-color 0.2s ease-in-out, transform 0.1s ease; /* เพิ่ม transition */
+            transition: background-color 0.2s ease-in-out, transform 0.1s ease;
+            margin-top: 10px;
         }
 
-        button:hover {
-            background-color: #0056b3;
+        .calc-button:hover {
+            background-color: #138496;
         }
-        button:active {
-            transform: scale(0.98); /* เอฟเฟกต์เมื่อกดปุ่ม */
+        .calc-button:active {
+            transform: scale(0.98);
         }
 
         /* --- Result Area --- */
         .result {
             margin-top: 25px;
             padding: 20px;
-            background: #eef1f5; /* สีพื้นหลังผลลัพธ์ */
-            border-left: 5px solid #007bff; /* เพิ่มแถบสีด้านซ้าย */
+            background: #eef1f5;
+            border-left: 5px solid #007bff;
             border-radius: 5px;
         }
         .result h3 {
             margin-top: 0;
             color: #007bff;
         }
+         .result hr {
+            border: 0;
+            height: 1px;
+            background-color: #ccc;
+            margin: 15px 0;
+        }
         .result p {
-            margin-bottom: 8px; /* ลดระยะห่างระหว่าง p ใน result */
+            margin-bottom: 8px;
+        }
+        .result-block { /* For 2-SAM results */
+            margin-bottom: 20px;
+            padding-bottom:10px;
+            border-bottom: 1px dashed #ccc;
+        }
+        .result-block:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
         }
 
+
         /* --- Error Message Styling --- */
-        .error-message h3 {
-            color: #dc3545 !important; /* สีแดงสำหรับหัวข้อข้อผิดพลาด */
+        .error-message h3 { /* Applied when resultDiv gets 'error-message' class */
+            color: #dc3545 !important;
         }
-        .error-message p {
-            color: #dc3545; /* สีแดงสำหรับข้อความข้อผิดพลาด */
+        .error-message p.error-text {
+            color: #dc3545 !important; /* Ensure override */
+            font-weight: bold;
         }
 
 
@@ -107,24 +174,28 @@
 
         .smooth-blinking-text {
             animation-name: smooth-blink-effect;
-            animation-duration: 1.8s; /* ปรับความเร็วเล็กน้อย */
+            animation-duration: 1.8s;
             animation-iteration-count: infinite;
             font-weight: bold;
         }
 
         /* --- Responsive Adjustments --- */
-        @media (max-width: 600px) {
-            body {
+        @media (max-width: 768px) {
+            .navigation-tabs {
+                flex-direction: column; /* Stack buttons on smaller screens */
                 padding: 10px;
+            }
+            .navigation-tabs button {
+                width: calc(100% - 16px); /* Full width with margin consideration */
+                margin: 5px 8px; /* Adjust margin for stacked view */
             }
             .container {
                 margin: 10px;
                 padding: 15px;
             }
-            h1 {
-                font-size: 22px;
-            }
-            input[type="number"], button {
+            h1 { font-size: 22px; }
+            h2 { font-size: 18px; }
+            input[type="number"], .calc-button {
                 padding: 10px;
                 font-size: 15px;
             }
@@ -132,125 +203,298 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>คำนวณเป้าหมายผลผลิตรายวัน</h1>
-        <form id="calcForm" onsubmit="event.preventDefault(); calculate();"> <label for="sam">SAM Style (นาที/ชิ้น):</label>
-            <input type="number" step="0.01" id="sam" required>
-
-            <label for="morningPeople">จำนวนคนทำงานช่วงเช้า (4 ชม.):</label>
-            <input type="number" id="morningPeople" required>
-
-            <label for="afternoonPeople">จำนวนคนทำงานช่วงบ่าย (4 ชม.):</label>
-            <input type="number" id="afternoonPeople" required>
-
-            <label for="otPeople">จำนวนคนทำงาน OT:</label>
-            <input type="number" id="otPeople" required>
-
-            <label for="otHours">ชั่วโมง OT/วัน (ใส่เฉพาะ ชม.โอที):</label>
-            <input type="number" id="otHours" required>
-
-            <label for="targetEff">เปอร์เซ็นต์ประสิทธิภาพที่ต้องการ (%):</label>
-            <input type="number" step="0.01" id="targetEff" required>
-
-            <button type="button" onclick="calculate()">คำนวณ</button>
-        </form>
-
-        <div id="result" class="result" role="alert" aria-live="assertive">
-            </div>
+    <div class="navigation-tabs">
+        <button id="showSingleSamCalcBtn" onclick="showCalculator('single')">คำนวณ SAM Style 1 อัน</button>
+        <button id="showDualSamCalcBtn" onclick="showCalculator('dual')">คำนวณ SAM Style 2 อัน</button>
     </div>
 
+    <div id="calculatorContainer">
+        <div class="container initial-message-container">
+             <h1>กรุณาเลือกประเภทเครื่องคำนวณจากปุ่มด้านบน</h1>
+             <p>เลือก "SAM Style 1 อัน" สำหรับการคำนวณผลผลิตพื้นฐาน หรือ "SAM Style 2 อัน" สำหรับการคำนวณที่ซับซ้อนขึ้นโดยกำหนดเวลาทำงานและจำนวนคนแยกตาม SAM</p>
+        </div>
+    </div>
+
+    <template id="singleSamCalculatorTemplate">
+        <div class="container">
+            <h1>คำนวณเป้าหมายผลผลิตรายวัน</h1>
+            <form id="calcFormSingle" onsubmit="event.preventDefault(); calculate_single_sam();">
+                <label for="sam_single">SAM Style (นาที/ชิ้น):</label>
+                <input type="number" step="0.01" id="sam_single" required>
+
+                <label for="morningPeople_single">จำนวนคนทำงานช่วงเช้า (4 ชม.):</label>
+                <input type="number" id="morningPeople_single" min="0" required>
+
+                <label for="afternoonPeople_single">จำนวนคนทำงานช่วงบ่าย (4 ชม.):</label>
+                <input type="number" id="afternoonPeople_single" min="0" required>
+
+                <label for="otPeople_single">จำนวนคนทำงาน OT:</label>
+                <input type="number" id="otPeople_single" min="0" required>
+
+                <label for="otHours_single">ชั่วโมง OT/วัน (ใส่เฉพาะ ชม.โอที):</label>
+                <input type="number" step="0.01" id="otHours_single" min="0" required>
+
+                <label for="targetEff_single">เปอร์เซ็นต์ประสิทธิภาพที่ต้องการ (%):</label>
+                <input type="number" step="0.01" id="targetEff_single" min="0" required>
+                <p class="input-hint">(ค่าที่กรอกจะถูกบวกเพิ่ม 0.05% อัตโนมัติในการคำนวณ)</p>
+
+                <button type="button" class="calc-button" onclick="calculate_single_sam()">คำนวณ (1 SAM)</button>
+            </form>
+            <div id="result_single" class="result" role="alert" aria-live="assertive"></div>
+        </div>
+    </template>
+
+    <template id="dualSamCalculatorTemplate">
+        <div class="container">
+            <h1>คำนวณเป้าหมายผลผลิตรายวัน (2 SAM Styles)</h1>
+            <form id="calcForm_2sam" onsubmit="event.preventDefault(); calculate_2sam();">
+                <h2>ข้อมูลทั่วไป</h2>
+                <label for="targetEff_dual">เปอร์เซ็นต์ประสิทธิภาพที่ต้องการโดยรวม (%):</label>
+                <input type="number" step="0.01" id="targetEff_dual" min="0" required>
+                <p class="input-hint">(ค่าที่กรอกจะถูกบวกเพิ่ม 0.05% อัตโนมัติในการคำนวณ)</p>
+                <hr>
+
+                <h2>SAM Style 1</h2>
+                <label for="sam1_value">SAM Style 1 (นาที/ชิ้น):</label>
+                <input type="number" step="0.01" id="sam1_value" required>
+                <label for="sam1_numPeople">จำนวนคนทำงานสำหรับ SAM Style 1:</label>
+                <input type="number" id="sam1_numPeople" min="0" required>
+                <label for="sam1_startHour">ชั่วโมงเริ่มทำงานปกติ SAM Style 1 (0-7):</label>
+                <input type="number" id="sam1_startHour" min="0" max="7" placeholder="เช่น 0 (แทนชั่วโมงแรก)" required>
+                <p class="input-hint">ป้อนค่า 0 ถึง 7 (สำหรับวันทำงานปกติ 8 ชั่วโมง, ชั่วโมงที่ 0 คือชั่วโมงแรก)</p>
+                <label for="sam1_endHour">ชั่วโมงสิ้นสุดทำงานปกติ SAM Style 1 (1-8):</label>
+                <input type="number" id="sam1_endHour" min="1" max="8" placeholder="เช่น 4 (สิ้นสุดที่ชั่วโมงที่ 4)" required>
+                <p class="input-hint">ป้อนค่า 1 ถึง 8 (ต้องมากกว่าชั่วโมงเริ่ม, เช่น สิ้นสุดที่ชั่วโมงที่ 4 หมายถึงทำงานถึงสิ้นสุดชั่วโมงที่ 3)</p>
+                <label for="sam1_otHours">ชั่วโมง OT สำหรับ SAM Style 1 (ถ้ามี):</label>
+                <input type="number" step="0.01" id="sam1_otHours" min="0" value="0" required>
+                <hr>
+
+                <h2>SAM Style 2</h2>
+                <label for="sam2_value">SAM Style 2 (นาที/ชิ้น):</label>
+                <input type="number" step="0.01" id="sam2_value" required>
+                <label for="sam2_numPeople">จำนวนคนทำงานสำหรับ SAM Style 2:</label>
+                <input type="number" id="sam2_numPeople" min="0" required>
+                <label for="sam2_startHour">ชั่วโมงเริ่มทำงานปกติ SAM Style 2 (0-7):</label>
+                <input type="number" id="sam2_startHour" min="0" max="7" placeholder="เช่น 4 (แทนชั่วโมงที่ห้า)" required>
+                <p class="input-hint">ป้อนค่า 0 ถึง 7</p>
+                <label for="sam2_endHour">ชั่วโมงสิ้นสุดทำงานปกติ SAM Style 2 (1-8):</label>
+                <input type="number" id="sam2_endHour" min="1" max="8" placeholder="เช่น 8 (สิ้นสุดที่ชั่วโมงที่ 8)" required>
+                <p class="input-hint">ป้อนค่า 1 ถึง 8 (ต้องมากกว่าชั่วโมงเริ่ม)</p>
+                <label for="sam2_otHours">ชั่วโมง OT สำหรับ SAM Style 2 (ถ้ามี):</label>
+                <input type="number" step="0.01" id="sam2_otHours" min="0" value="0" required>
+
+                <button type="button" class="calc-button" onclick="calculate_2sam()">คำนวณเป้าหมาย (2 SAM)</button>
+            </form>
+            <div id="result_2sam" class="result" role="alert" aria-live="assertive"></div>
+        </div>
+    </template>
+
     <script>
-        function calculate() {
-            // --- 1. Read and Parse Input Values ---
-            const sam = parseFloat(document.getElementById('sam').value);
-            const morningPeople = parseFloat(document.getElementById('morningPeople').value);
-            const afternoonPeople = parseFloat(document.getElementById('afternoonPeople').value);
-            const otPeople = parseFloat(document.getElementById('otPeople').value);
-            const otHours = parseFloat(document.getElementById('otHours').value);
-            const targetEffInput = parseFloat(document.getElementById('targetEff').value); // ค่า % ประสิทธิภาพที่ผู้ใช้กรอก
+        const calculatorContainer = document.getElementById('calculatorContainer');
+        const singleSamTemplateEl = document.getElementById('singleSamCalculatorTemplate');
+        const dualSamTemplateEl = document.getElementById('dualSamCalculatorTemplate');
+        const btnShowSingle = document.getElementById('showSingleSamCalcBtn');
+        const btnShowDual = document.getElementById('showDualSamCalcBtn');
 
-            const resultDiv = document.getElementById('result'); // เก็บ element ของ result div
+        function showCalculator(type) {
+            calculatorContainer.innerHTML = ''; // Clear previous content
+            let contentNode;
 
-            // --- 2. Validate Inputs ---
-            // Clear previous results or errors
-            resultDiv.innerHTML = ''; 
+            btnShowSingle.classList.remove('active');
+            btnShowDual.classList.remove('active');
+
+            if (type === 'single') {
+                contentNode = singleSamTemplateEl.content.cloneNode(true);
+                btnShowSingle.classList.add('active');
+            } else if (type === 'dual') {
+                contentNode = dualSamTemplateEl.content.cloneNode(true);
+                btnShowDual.classList.add('active');
+            } else { // Should not happen with current buttons but good fallback
+                calculatorContainer.innerHTML = '<div class="container initial-message-container"><h1>กรุณาเลือกประเภทเครื่องคำนวณ</h1></div>';
+                return;
+            }
+            calculatorContainer.appendChild(contentNode);
+        }
+
+        // --- START: calculate_single_sam() function (for Single SAM Style) ---
+        function calculate_single_sam() {
+            const sam = parseFloat(document.getElementById('sam_single').value);
+            const morningPeople = parseFloat(document.getElementById('morningPeople_single').value);
+            const afternoonPeople = parseFloat(document.getElementById('afternoonPeople_single').value);
+            const otPeople = parseFloat(document.getElementById('otPeople_single').value);
+            const otHours = parseFloat(document.getElementById('otHours_single').value);
+            const targetEffInput = parseFloat(document.getElementById('targetEff_single').value);
+
+            const resultDiv = document.getElementById('result_single');
+            resultDiv.innerHTML = '';
             resultDiv.className = 'result'; // Reset class
 
             if (isNaN(sam) || isNaN(morningPeople) || isNaN(afternoonPeople) || isNaN(otPeople) || isNaN(otHours) || isNaN(targetEffInput)) {
-                resultDiv.className = 'result error-message'; // Add error class
+                resultDiv.className = 'result error-message';
                 resultDiv.innerHTML = `
                     <h3>ข้อผิดพลาด:</h3>
-                    <p>กรุณากรอกข้อมูลให้ครบทุกช่องด้วยตัวเลขที่ถูกต้อง</p>
+                    <p class="error-text">กรุณากรอกข้อมูลให้ครบทุกช่องด้วยตัวเลขที่ถูกต้อง</p>
                 `;
                 return;
             }
 
             let errorMessage = '';
-            if (sam <= 0) {
-                errorMessage = 'ค่า SAM Style ต้องมากกว่า 0';
-            } else if (morningPeople < 0) {
-                errorMessage = 'จำนวนคนทำงานช่วงเช้าต้องไม่ติดลบ';
-            } else if (afternoonPeople < 0) {
-                errorMessage = 'จำนวนคนทำงานช่วงบ่ายต้องไม่ติดลบ';
-            } else if (otPeople < 0) {
-                errorMessage = 'จำนวนคนทำงาน OT ต้องไม่ติดลบ';
-            } else if (otHours < 0) {
-                errorMessage = 'ชั่วโมง O.T. ต้องไม่ติดลบ';
-            } else if (targetEffInput < 0) { // โดยทั่วไป targetEff ควรมากกว่า 0 ด้วย แต่ตามโค้ดเดิมคือไม่ติดลบ
-                errorMessage = 'เปอร์เซ็นต์ประสิทธิภาพที่ต้องการต้องไม่ติดลบ';
-            }
+            if (sam <= 0) errorMessage = 'ค่า SAM Style ต้องมากกว่า 0';
+            else if (morningPeople < 0) errorMessage = 'จำนวนคนทำงานช่วงเช้าต้องไม่ติดลบ';
+            else if (afternoonPeople < 0) errorMessage = 'จำนวนคนทำงานช่วงบ่ายต้องไม่ติดลบ';
+            else if (otPeople < 0) errorMessage = 'จำนวนคนทำงาน OT ต้องไม่ติดลบ';
+            else if (otHours < 0) errorMessage = 'ชั่วโมง O.T. ต้องไม่ติดลบ';
+            else if (targetEffInput < 0) errorMessage = 'เปอร์เซ็นต์ประสิทธิภาพที่ต้องการต้องไม่ติดลบ';
 
             if (errorMessage) {
-                resultDiv.className = 'result error-message'; // Add error class
+                resultDiv.className = 'result error-message';
                 resultDiv.innerHTML = `
                     <h3>ข้อผิดพลาด:</h3>
-                    <p class="smooth-blinking-text">${errorMessage}</p>
+                    <p class="error-text smooth-blinking-text">${errorMessage}</p>
                 `;
                 return;
             }
 
-            // --- 3. Perform Calculations ---
-            // เวลาทำงานปกติ (นาที)
-            const normalWorkMinutesMorning = morningPeople * 4 * 60;
-            const normalWorkMinutesAfternoon = afternoonPeople * 4 * 60;
-            const totalNormalWorkMinutes = normalWorkMinutesMorning + normalWorkMinutesAfternoon;
+            const totalNormalTime = (morningPeople * 4 * 60) + (afternoonPeople * 4 * 60);
+            const totalNormalTime2_6hr = (morningPeople * 4 * 60) + (afternoonPeople * 2 * 60); // 6-hour target logic
+            const totalOtTime = (otPeople * otHours * 60);
+            const totalTime = totalNormalTime + totalOtTime;
 
-            // เวลาทำงาน 6 ชั่วโมง (เช่น ถึง 15:30 น. หากเริ่ม 08:00 น. และพักกลางวัน 1 ชั่วโมง)
-            // สมมติว่าช่วงบ่ายนับแค่ 2 ชั่วโมงสำหรับเป้าหมายนี้
-            const first6HoursWorkMinutes = normalWorkMinutesMorning + (afternoonPeople * 2 * 60); 
+            const expectedOutputAt100Eff = totalTime / sam;
+            const expectedOutputAt100Eff2_6hr = totalNormalTime2_6hr / sam;
 
-            // เวลาทำงาน OT (นาที)
-            const otWorkMinutes = otPeople * otHours * 60;
-
-            // เวลารวมทั้งหมด (นาที)
-            const totalAvailableMinutes = totalNormalWorkMinutes + otWorkMinutes;
-            // const totalAvailableHours = totalAvailableMinutes / 60; // ไม่ได้ใช้ในการแสดงผล จึงคอมเมนต์ไว้
-
-            // ผลผลิตที่คาดหวังหากประสิทธิภาพเป็น 100%
-            const expectedOutputAt100Eff_Total = totalAvailableMinutes / sam;
-            const expectedOutputAt100Eff_6Hours = first6HoursWorkMinutes / sam;
-
-            // ปรับเป้าหมายประสิทธิภาพ: เพิ่ม 0.05% เข้าไปในค่าที่ผู้ใช้กรอก
-            // เช่น ถ้าผู้ใช้กรอก 60 (สำหรับ 60%), ค่าที่ใช้คำนวณคือ 60.05%
             const adjustedTargetEffPercentage = (targetEffInput + 0.05) / 100;
 
-            // จำนวนงานที่ต้องทำเพื่อให้ได้ตาม Target EFF% ที่ปรับแล้ว
-            const requiredOutput_Total = adjustedTargetEffPercentage * expectedOutputAt100Eff_Total;
-            const requiredOutput_6Hours = adjustedTargetEffPercentage * expectedOutputAt100Eff_6Hours;
+            const requiredOutput = adjustedTargetEffPercentage * expectedOutputAt100Eff;
+            const requiredOutput2_6hr = adjustedTargetEffPercentage * expectedOutputAt100Eff2_6hr;
 
-            // --- 4. Display Results ---
             resultDiv.innerHTML = `
-                <h3>ผลลัพธ์การคำนวณ:</h3>
-                <p>ผลผลิตที่คาดหวัง (เมื่อประสิทธิภาพ 100% ตลอดเวลาทำงานรวม OT): <strong>${expectedOutputAt100Eff_Total.toFixed(2)} ตัว</strong></p>
-                <p>ผลผลิตที่คาดหวัง (เมื่อประสิทธิภาพ 100% ณ 6 ชม.ทำงาน): <strong>${expectedOutputAt100Eff_6Hours.toFixed(2)} ตัว</strong></p>
+                <h3>ผลลัพธ์ (1 SAM Style):</h3>
+                <p>ผลผลิตคาดหวัง (100% Eff, รวม OT): <strong>${expectedOutputAt100Eff.toFixed(2)} ตัว</strong></p>
+                <p>ผลผลิตคาดหวัง (100% Eff, ณ 6 ชม.): <strong>${expectedOutputAt100Eff2_6hr.toFixed(2)} ตัว</strong></p>
                 <hr>
-                <p>เป้าหมายประสิทธิภาพที่ตั้งไว้ (จาก Input): <strong>${targetEffInput.toFixed(2)}%</strong></p>
-                <p>เป้าหมายประสิทธิภาพที่ใช้คำนวณจริง (Input + 0.05%): <strong>${(adjustedTargetEffPercentage * 100).toFixed(2)}%</strong></p>
-                <p style="font-size: 1.1em; margin-top:10px;"><strong>จำนวนงานที่ต้องทำ ณ 6 ชั่วโมงทำงาน (คำนวณจากประสิทธิภาพ ${(adjustedTargetEffPercentage * 100).toFixed(2)}%): <span style="color: #007bff; font-size: 1.2em;">${requiredOutput_6Hours.toFixed(2)} ตัว</span></strong></p>
-                <p style="font-size: 1.1em;"><strong>จำนวนงานที่ต้องทำทั้งหมดต่อวัน (คำนวณจากประสิทธิภาพ ${(adjustedTargetEffPercentage * 100).toFixed(2)}%): <span style="color: #007bff; font-size: 1.2em;">${requiredOutput_Total.toFixed(2)} ตัว</span></strong></p>
+                <p>เป้าหมาย Eff ที่ตั้งไว้: <strong>${targetEffInput.toFixed(2)}%</strong></p>
+                <p>เป้าหมาย Eff ที่ใช้คำนวณ (Input + 0.05%): <strong>${(adjustedTargetEffPercentage * 100).toFixed(2)}%</strong></p>
+                <p style="font-size: 1.1em; margin-top:10px;"><strong>เป้าหมาย ณ 6 ชม. (คำนวณจาก ${(adjustedTargetEffPercentage * 100).toFixed(2)}% Eff): <span style="color: #007bff; font-size: 1.2em;">${requiredOutput2_6hr.toFixed(2)} ตัว</span></strong></p>
+                <p style="font-size: 1.1em;"><strong>เป้าหมายรวมต่อวัน (คำนวณจาก ${(adjustedTargetEffPercentage * 100).toFixed(2)}% Eff): <span style="color: #007bff; font-size: 1.2em;">${requiredOutput.toFixed(2)} ตัว</span></strong></p>
                 <p style="margin-top: 15px;"><span style="color: #dc3545;" class="smooth-blinking-text"><strong>*** หมายเหตุ: เป้าหมายผลผลิตนี้ ได้ใช้ค่าประสิทธิภาพที่ผู้ใช้กรอกบวกเพิ่มอีก 0.05% ในการคำนวณแล้ว ***</strong></span></p>
             `;
         }
+        // --- END: calculate_single_sam() function ---
+
+        // --- START: calculate_2sam() function (for Dual SAM Style) ---
+        function calculate_2sam() {
+            const targetEffInput = parseFloat(document.getElementById('targetEff_dual').value);
+            const resultDiv = document.getElementById('result_2sam');
+            resultDiv.innerHTML = '';
+            resultDiv.className = 'result';
+
+            function getSamStyleInputs(styleNumber) {
+                const samValue = parseFloat(document.getElementById(`sam${styleNumber}_value`).value);
+                const numPeople = parseInt(document.getElementById(`sam${styleNumber}_numPeople`).value);
+                const startHour = parseInt(document.getElementById(`sam${styleNumber}_startHour`).value);
+                const endHour = parseInt(document.getElementById(`sam${styleNumber}_endHour`).value);
+                const otHours = parseFloat(document.getElementById(`sam${styleNumber}_otHours`).value);
+
+                if (isNaN(samValue) || isNaN(numPeople) || isNaN(startHour) || isNaN(endHour) || isNaN(otHours)) {
+                    return { error: `กรุณากรอกข้อมูลสำหรับ SAM Style ${styleNumber} ให้ครบทุกช่องด้วยตัวเลขที่ถูกต้อง` };
+                }
+                if (samValue <= 0) return { error: `SAM Style ${styleNumber}: ค่า SAM ต้องมากกว่า 0` };
+                if (numPeople < 0) return { error: `SAM Style ${styleNumber}: จำนวนคนต้องไม่ติดลบ` };
+                if (startHour < 0 || startHour > 7) return { error: `SAM Style ${styleNumber}: ชั่วโมงเริ่มทำงานปกติ ต้องอยู่ระหว่าง 0 ถึง 7`};
+                if (endHour < 1 || endHour > 8) return { error: `SAM Style ${styleNumber}: ชั่วโมงสิ้นสุดทำงานปกติ ต้องอยู่ระหว่าง 1 ถึง 8`};
+                if (endHour <= startHour) return { error: `SAM Style ${styleNumber}: ชั่วโมงสิ้นสุดต้องมากกว่าชั่วโมงเริ่ม` };
+                if (otHours < 0) return { error: `SAM Style ${styleNumber}: ชั่วโมง OT ต้องไม่ติดลบ` };
+                
+                const normalDuration = endHour - startHour;
+                return { samValue, numPeople, startHour, endHour, otHours, normalDuration, isValid: true };
+            }
+
+            if (isNaN(targetEffInput) || targetEffInput < 0) {
+                resultDiv.className = 'result error-message';
+                resultDiv.innerHTML = `<h3>ข้อผิดพลาด:</h3><p class="error-text smooth-blinking-text">เปอร์เซ็นต์ประสิทธิภาพที่ต้องการต้องไม่ติดลบและเป็นตัวเลข</p>`;
+                return;
+            }
+
+            const sam1_data = getSamStyleInputs(1);
+            if (!sam1_data.isValid) {
+                resultDiv.className = 'result error-message';
+                resultDiv.innerHTML = `<h3>ข้อผิดพลาด:</h3><p class="error-text smooth-blinking-text">${sam1_data.error}</p>`;
+                return;
+            }
+
+            const sam2_data = getSamStyleInputs(2);
+            if (!sam2_data.isValid) {
+                resultDiv.className = 'result error-message';
+                resultDiv.innerHTML = `<h3>ข้อผิดพลาด:</h3><p class="error-text smooth-blinking-text">${sam2_data.error}</p>`;
+                return;
+            }
+
+            const adjustedTargetEffPercentage = (targetEffInput + 0.05) / 100;
+
+            function calculateStyleOutput(data, styleNumForDisplay) {
+                const workMinutesNormal = data.numPeople * data.normalDuration * 60;
+                const workMinutesOT = data.numPeople * data.otHours * 60;
+                const totalWorkMinutes = workMinutesNormal + workMinutesOT;
+
+                if (data.samValue > 0 && totalWorkMinutes <= 0 ) { // Check if SAM is valid but no time
+                     return { error: `SAM Style ${styleNumForDisplay} ไม่มีเวลาทำงานที่กำหนด แต่มีค่า SAM` };
+                }
+                 if (data.samValue <=0 && totalWorkMinutes > 0 ) { // Check if time is valid but SAM is not
+                     return { error: `SAM Style ${styleNumForDisplay} มีเวลาทำงาน แต่ค่า SAM ไม่ถูกต้อง` };
+                }
+                if (data.samValue <=0 && totalWorkMinutes <=0 ) { // Both SAM and time might be zero/invalid, treat as no output
+                     return { styleNumber: styleNumForDisplay, numPeople: data.numPeople, normalDuration: data.normalDuration, otHours: data.otHours, totalWorkMinutes:0, expectedOutput100:0, requiredOutput:0 };
+                }
+
+
+                const expectedOutput100 = totalWorkMinutes / data.samValue;
+                const requiredOutput = adjustedTargetEffPercentage * expectedOutput100;
+
+                return { styleNumber: styleNumForDisplay, numPeople: data.numPeople, normalDuration: data.normalDuration, otHours: data.otHours, totalWorkMinutes, expectedOutput100, requiredOutput };
+            }
+
+            const results_sam1 = calculateStyleOutput(sam1_data, 1);
+             if (results_sam1.error) {
+                 resultDiv.className = 'result error-message';
+                 resultDiv.innerHTML = `<h3>ข้อผิดพลาด:</h3><p class="error-text smooth-blinking-text">${results_sam1.error}</p>`;
+                 return;
+            }
+            const results_sam2 = calculateStyleOutput(sam2_data, 2);
+            if (results_sam2.error) {
+                 resultDiv.className = 'result error-message';
+                 resultDiv.innerHTML = `<h3>ข้อผิดพลาด:</h3><p class="error-text smooth-blinking-text">${results_sam2.error}</p>`;
+                 return;
+            }
+
+            resultDiv.innerHTML = `
+                <h3>ผลลัพธ์การคำนวณ (2 SAM Styles):</h3>
+                <p>เป้าหมาย Eff ที่ตั้งไว้: <strong>${targetEffInput.toFixed(2)}%</strong></p>
+                <p>เป้าหมาย Eff ที่ใช้คำนวณ (Input + 0.05%): <strong>${(adjustedTargetEffPercentage * 100).toFixed(2)}%</strong></p>
+                <hr>
+                <div class="result-block">
+                    <h4>SAM Style 1 (SAM: ${sam1_data.samValue.toFixed(2)} นาที/ชิ้น)</h4>
+                    <p>จำนวนคน: ${results_sam1.numPeople} คน</p>
+                    <p>เวลาทำงานปกติ: ${results_sam1.normalDuration.toFixed(2)} ชั่วโมง (เริ่ม ชม. ${sam1_data.startHour} สิ้นสุดก่อน ชม. ${sam1_data.endHour})</p>
+                    <p>เวลา OT: ${results_sam1.otHours.toFixed(2)} ชั่วโมง</p>
+                    <p>เวลารวมผลิต SAM1: ${results_sam1.totalWorkMinutes.toFixed(2)} นาที</p>
+                    <p>ผลผลิตคาดหวัง @100% Eff: <strong>${results_sam1.expectedOutput100.toFixed(2)} ตัว</strong></p>
+                    <p style="font-size: 1.1em;">เป้าหมายผลผลิต SAM Style 1: <strong><span style="color: #007bff; font-size: 1.2em;">${results_sam1.requiredOutput.toFixed(2)} ตัว</span></strong></p>
+                </div>
+                <div class="result-block">
+                    <h4>SAM Style 2 (SAM: ${sam2_data.samValue.toFixed(2)} นาที/ชิ้น)</h4>
+                    <p>จำนวนคน: ${results_sam2.numPeople} คน</p>
+                    <p>เวลาทำงานปกติ: ${results_sam2.normalDuration.toFixed(2)} ชั่วโมง (เริ่ม ชม. ${sam2_data.startHour} สิ้นสุดก่อน ชม. ${sam2_data.endHour})</p>
+                    <p>เวลา OT: ${results_sam2.otHours.toFixed(2)} ชั่วโมง</p>
+                    <p>เวลารวมผลิต SAM2: ${results_sam2.totalWorkMinutes.toFixed(2)} นาที</p>
+                    <p>ผลผลิตคาดหวัง @100% Eff: <strong>${results_sam2.expectedOutput100.toFixed(2)} ตัว</strong></p>
+                    <p style="font-size: 1.1em;">เป้าหมายผลผลิต SAM Style 2: <strong><span style="color: #007bff; font-size: 1.2em;">${results_sam2.requiredOutput.toFixed(2)} ตัว</span></strong></p>
+                </div>
+                <p style="margin-top: 15px;"><span style="color: #dc3545;" class="smooth-blinking-text"><strong>*** หมายเหตุ: เป้าหมายผลผลิตนี้ ได้ใช้ค่าประสิทธิภาพที่ผู้ใช้กรอกบวกเพิ่มอีก 0.05% ในการคำนวณแล้ว ***</strong></span></p>
+            `;
+        }
+        // --- END: calculate_2sam() function ---
+
     </script>
 </body>
 </html>
