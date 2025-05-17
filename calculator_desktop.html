@@ -358,88 +358,88 @@
     </template>
 
     <script>
-        // JavaScript (calculate_single_sam, calculate_2sam, showCalculator) is identical to the original.
-        // No changes needed for the core logic as HTML element IDs are maintained.
         const calculatorContainer = document.getElementById('calculatorContainer');
         const singleSamTemplateEl = document.getElementById('singleSamCalculatorTemplate');
         const dualSamTemplateEl = document.getElementById('dualSamCalculatorTemplate');
         const btnShowSingle = document.getElementById('showSingleSamCalcBtn');
         const btnShowDual = document.getElementById('showDualSamCalcBtn');
 
+        // --- Log if elements are found on script load (for debugging) ---
+        console.log("Script loaded. Checking elements:");
+        console.log("calculatorContainer:", calculatorContainer);
+        console.log("singleSamTemplateEl:", singleSamTemplateEl);
+        console.log("dualSamTemplateEl:", dualSamTemplateEl);
+        console.log("btnShowSingle:", btnShowSingle);
+        console.log("btnShowDual:", btnShowDual);
+        // --- End of initial element check ---
+
         function showCalculator(type) {
+            console.log("showCalculator called with type:", type); // Log function call
+
+            if (!calculatorContainer) {
+                console.error("CRITICAL: calculatorContainer element not found!");
+                // alert("Error: Main calculator container missing. Please contact support."); // Optional: user-facing alert
+                return;
+            }
             calculatorContainer.innerHTML = ''; // Clear previous content
             let contentNode;
 
-            btnShowSingle.classList.remove('active');
-            btnShowDual.classList.remove('active');
+            // Deactivate buttons
+            if (btnShowSingle) {
+                btnShowSingle.classList.remove('active');
+            } else {
+                console.warn("btnShowSingle not found when trying to remove 'active' class.");
+            }
+            if (btnShowDual) {
+                btnShowDual.classList.remove('active');
+            } else {
+                console.warn("btnShowDual not found when trying to remove 'active' class.");
+            }
 
             if (type === 'single') {
-                contentNode = singleSamTemplateEl.content.cloneNode(true);
-                btnShowSingle.classList.add('active');
+                if (singleSamTemplateEl && singleSamTemplateEl.content) {
+                    contentNode = singleSamTemplateEl.content.cloneNode(true);
+                    console.log("Cloned single SAM template content:", contentNode);
+                    if (btnShowSingle) {
+                        btnShowSingle.classList.add('active');
+                    } else {
+                        console.warn("btnShowSingle not found when trying to add 'active' class.");
+                    }
+                } else {
+                    console.error("Error: singleSamCalculatorTemplate or its .content is not available.");
+                    calculatorContainer.innerHTML = '<div class="container initial-message-container"><h1>ข้อผิดพลาด: ไม่พบเทมเพลตสำหรับ SAM Style 1 อัน</h1></div>';
+                    return;
+                }
             } else if (type === 'dual') {
-                contentNode = dualSamTemplateEl.content.cloneNode(true);
-                btnShowDual.classList.add('active');
+                if (dualSamTemplateEl && dualSamTemplateEl.content) {
+                    contentNode = dualSamTemplateEl.content.cloneNode(true);
+                    console.log("Cloned dual SAM template content:", contentNode);
+                    if (btnShowDual) {
+                        btnShowDual.classList.add('active');
+                    } else {
+                        console.warn("btnShowDual not found when trying to add 'active' class.");
+                    }
+                } else {
+                    console.error("Error: dualSamCalculatorTemplate or its .content is not available.");
+                    calculatorContainer.innerHTML = '<div class="container initial-message-container"><h1>ข้อผิดพลาด: ไม่พบเทมเพลตสำหรับ SAM Style 2 อัน</h1></div>';
+                    return;
+                }
             } else {
-                calculatorContainer.innerHTML = '<div class="container initial-message-container"><h1>กรุณาเลือกประเภทเครื่องคำนวณ</h1></div>';
+                console.warn("Unknown calculator type received:", type);
+                calculatorContainer.innerHTML = '<div class="container initial-message-container"><h1>กรุณาเลือกประเภทเครื่องคำนวณที่ถูกต้อง</h1></div>';
                 return;
             }
-            calculatorContainer.appendChild(contentNode);
-            // Optional: Scroll to the top of the calculator form after loading
-            // calculatorContainer.scrollIntoView({ behavior: 'smooth' });
+
+            if (contentNode) {
+                calculatorContainer.appendChild(contentNode);
+                console.log("Successfully appended content to calculatorContainer.");
+            } else {
+                // This case should ideally be caught by the template existence checks above,
+                // but it's a good fallback.
+                console.error("Error: contentNode is null or undefined after attempting to clone. Calculator content not loaded for type:", type);
+                calculatorContainer.innerHTML = '<div class="container initial-message-container"><h1>ข้อผิดพลาด: ไม่สามารถโหลดเนื้อหาเครื่องคำนวณได้</h1></div>';
+            }
         }
 
         // --- START: calculate_single_sam() function (for Single SAM Style) ---
-        function calculate_single_sam() {
-            const sam = parseFloat(document.getElementById('sam_single').value);
-            const morningPeople = parseFloat(document.getElementById('morningPeople_single').value);
-            const afternoonPeople = parseFloat(document.getElementById('afternoonPeople_single').value);
-            const otPeople = parseFloat(document.getElementById('otPeople_single').value);
-            const otHours = parseFloat(document.getElementById('otHours_single').value);
-            const targetEffInput = parseFloat(document.getElementById('targetEff_single').value);
-
-            const resultDiv = document.getElementById('result_single');
-            resultDiv.innerHTML = '';
-            resultDiv.className = 'result'; // Reset class
-
-            if (isNaN(sam) || isNaN(morningPeople) || isNaN(afternoonPeople) || isNaN(otPeople) || isNaN(otHours) || isNaN(targetEffInput)) {
-                resultDiv.className = 'result error-message';
-                resultDiv.innerHTML = `
-                    <h3>ข้อผิดพลาด:</h3>
-                    <p class="error-text">กรุณากรอกข้อมูลให้ครบทุกช่องด้วยตัวเลขที่ถูกต้อง</p>
-                `;
-                return;
-            }
-
-            let errorMessage = '';
-            if (sam <= 0) errorMessage = 'ค่า SAM Style ต้องมากกว่า 0';
-            else if (morningPeople < 0) errorMessage = 'จำนวนคนทำงานช่วงเช้าต้องไม่ติดลบ';
-            else if (afternoonPeople < 0) errorMessage = 'จำนวนคนทำงานช่วงบ่ายต้องไม่ติดลบ';
-            else if (otPeople < 0) errorMessage = 'จำนวนคนทำงาน OT ต้องไม่ติดลบ';
-            else if (otHours < 0) errorMessage = 'ชั่วโมง O.T. ต้องไม่ติดลบ';
-            else if (targetEffInput < 0) errorMessage = 'เปอร์เซ็นต์ประสิทธิภาพที่ต้องการต้องไม่ติดลบ';
-
-            if (errorMessage) {
-                resultDiv.className = 'result error-message';
-                resultDiv.innerHTML = `
-                    <h3>ข้อผิดพลาด:</h3>
-                    <p class="error-text smooth-blinking-text">${errorMessage}</p>
-                `;
-                return;
-            }
-
-            const totalNormalTime = (morningPeople * 4 * 60) + (afternoonPeople * 4 * 60);
-            const totalNormalTime2_6hr = (morningPeople * 4 * 60) + (afternoonPeople * 2 * 60); // 6-hour target logic
-            const totalOtTime = (otPeople * otHours * 60);
-            const totalTime = totalNormalTime + totalOtTime;
-
-            const expectedOutputAt100Eff = (sam > 0) ? (totalTime / sam) : 0;
-            const expectedOutputAt100Eff2_6hr = (sam > 0) ? (totalNormalTime2_6hr / sam) : 0;
-
-            const adjustedTargetEffPercentage = (targetEffInput + 0.05) / 100;
-
-            const requiredOutput = adjustedTargetEffPercentage * expectedOutputAt100Eff;
-            const requiredOutput2_6hr = adjustedTargetEffPercentage * expectedOutputAt100Eff2_6hr;
-
-            resultDiv.innerHTML = `
-                <h3>ผลลัพธ์ (1 SAM Style):</h3>
-                <p>ผลผลิตคาดหวัง (100%
+        // This f
