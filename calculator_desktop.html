@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>เครื่องคำนวณเป้าหมายผลผลิต (Desktop Version)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* --- Global Styles --- */
+        body {
+            font-family: 'Arial', 'Helvetica Neue', sans-serif;
+            padding: 0;
+            margin: 0;
+            background-color: #e9ecef; /* Slightly different background for desktop */
+            color: #212529; /* Darker text for better contrast */
+            line-height: 1.7; /* Increased line height for readability */
+        }
+
+        /* --- Navigation --- */
+        .navigation-tabs {
+            display: flex;
+            justify-content: center;
+            background-color: #343a40;
+            padding: 15px 0; /* More padding for tabs */
+            margin-bottom: 30px; /* More space below tabs */
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+        }
+        .navigation-tabs button {
+            background-color: #495057;
+            color: white;
+            padding: 15px 35px; /* Larger buttons */
+            margin: 0 12px; /* More spacing between buttons */
+            border: none;
+            border-radius: 6px; /* Slightly more rounded */
+            font-size: 18px; /* Larger font size */
+            cursor: pointer;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.1s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+        }
+        .navigation-tabs button:hover {
+            background-color: #007bff;
+            transform: translateY(-2px); /* Slight lift on hover */
+        }
+        .navigation-tabs button.active {
+            background-color: #007bff;
+            font-weight: bold;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.25);
+            transform: translateY(-1px);
+        }
+
+        /* --- Container (for calculator content) --- */
+        .container {
+            max-width: 1000px; /* Wider container for desktop */
+            margin: 30px auto; /* Centered with more margin */
+            padding: 35px; /* More padding inside container */
+            background-color: #ffffff;
+            border-radius: 10px; /* More rounded corners */
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1); /* Softer, larger shadow */
+        }
+        .initial-message-container {
+             text-align:center;
+             padding: 60px 40px; /* More padding for initial message */
+        }
+        .initial-message-container h1 { font-size: 30px; }
+        .initial-message-container p { font-size: 18px; }
+
+
+        /* --- Headings and Text --- */
+        h1 {
+            font-size: 30px; /* Larger main heading */
+            text-align: center;
+            color: #1a2533; /* Darker blue/grey */
+            margin-bottom: 30px;
+        }
+        h2 {
+            font-size: 24px; /* Larger sub-heading */
+            color: #0069d9; /* Slightly darker blue */
+            margin-top: 40px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #dee2e6; /* Thicker border */
+            padding-bottom: 10px;
+        }
+
+        /* --- Form Grouping and Layout for Desktop --- */
+        .form-row { /* For side-by-side elements if needed, though not implemented in this version yet */
+            display: flex;
+            flex-wrap: wrap;
+            margin-right: -10px;
+            margin-left: -10px;
+        }
+        .form-col {
+            flex-basis: 0;
+            flex-grow: 1;
+            max-width: 100%;
+            padding-right: 10px;
+            padding-left: 10px;
+        }
+        .form-group {
+            margin-bottom: 20px; /* Consistent spacing for form elements */
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 17px; /* Slightly larger label */
+            font-weight: 600; /* Semi-bold */
+            color: #495057;
+        }
+        .input-hint {
+            font-size: 0.9em;
+            color: #6c757d;
+            margin-top: -6px;
+            margin-bottom: 15px;
+        }
+
+        /* --- Form Elements --- */
+        input[type="number"] { /* Applied to all inputs now via form-group */
+            width: 100%;
+            padding: 14px; /* Comfortable padding */
+            margin-bottom: 5px; /* Reduced margin as form-group handles spacing */
+            box-sizing: border-box;
+            font-size: 16px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        input[type="number"]:focus {
+            border-color: #80bdff; /* Lighter blue on focus */
+            box-shadow: 0 0 0 0.25rem rgba(0,123,255,.25); /* Bootstrap-like focus glow */
+            outline: none;
+        }
+
+        .calc-button {
+            width: 100%; /* Full width button in its column/container */
+            padding: 15px;
+            background-color: #17a2b8; /* Info blue */
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out, transform 0.1s ease, box-shadow 0.2s ease;
+            margin-top: 20px; /* More space above button */
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .calc-button:hover {
+            background-color: #138496; /* Darker shade on hover */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            transform: translateY(-1px);
+        }
+        .calc-button:active {
+            transform: scale(0.98) translateY(0px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* --- Result Area --- */
+        .result {
+            margin-top: 35px;
+            padding: 30px;
+            background: #f8f9fa; /* Lighter background for result */
+            border-left: 6px solid #007bff; /* Thicker accent border */
+            border-radius: 8px; /* Consistent rounding */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+        .result h3 {
+            margin-top: 0;
+            margin-bottom: 20px; /* More space below result heading */
+            color: #0056b3; /* Darker blue for result heading */
+            font-size: 22px;
+        }
+         .result hr {
+            border: 0;
+            height: 1px;
+            background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0));
+            margin: 25px 0;
+        }
+        .result p {
+            margin-bottom: 12px;
+            font-size: 17px; /* Larger result text */
+        }
+        .result-block {
+            margin-bottom: 25px;
+            padding-bottom:20px;
+            border-bottom: 1px dashed #ced4da; /* Lighter dashed border */
+        }
+        .result-block:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .result-block h4 {
+            font-size: 20px;
+            color: #343a40;
+            margin-bottom: 15px;
+        }
+
+
+        /* --- Error Message Styling --- */
+        .error-message {
+            background: #f8d7da;
+            border-left-color: #dc3545;
+        }
+        .error-message h3 {
+            color: #721c24 !important;
+        }
+        .error-message p.error-text {
+            color: #721c24 !important;
+            font-weight: bold;
+        }
+
+
+        /* --- Animation --- */
+        @keyframes smooth-blink-effect {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+        .smooth-blinking-text {
+            animation-name: smooth-blink-effect;
+            animation-duration: 1.8s;
+            animation-iteration-count: infinite;
+            font-weight: bold;
+        }
+
+        /* --- Responsive Adjustments for Desktop (minor tweaks if window is resized) --- */
+        /* The main mobile layout is handled by calculator_mobile.html */
+        @media (max-width: 768px) {
+            /* Even on desktop, if window is small, make nav buttons more manageable */
+            .navigation-tabs {
+                flex-wrap: wrap; /* Allow buttons to wrap if not enough space */
+            }
+            .navigation-tabs button {
+                padding: 12px 25px;
+                font-size: 16px;
+                margin: 5px;
+            }
+            .container {
+                margin: 20px 15px; /* Reduce side margins on smaller desktop windows */
+                padding: 25px;
+            }
+            h1 { font-size: 26px; }
+            h2 { font-size: 22px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="navigation-tabs">
+        <button id="showSingleSamCalcBtn" onclick="showCalculator('single')">คำนวณ SAM Style 1 อัน</button>
+        <button id="showDualSamCalcBtn" onclick="showCalculator('dual')">คำนวณ SAM Style 2 อัน</button>
+    </div>
+
+    <div id="calculatorContainer">
+        <div class="container initial-message-container">
+             <h1>กรุณาเลือกประเภทเครื่องคำนวณจากปุ่มด้านบน</h1>
+             <p>เลือก "SAM Style 1 อัน" สำหรับการคำนวณผลผลิตพื้นฐาน หรือ "SAM Style 2 อัน" สำหรับการคำนวณที่ซับซ้อนขึ้นโดยกำหนดเวลาทำงานและจำนวนคนแยกตาม SAM</p>
+        </div>
+    </div>
+
+    <template id="singleSamCalculatorTemplate">
+        <div class="container">
+            <h1>คำนวณเป้าหมายผลผลิตรายวัน (1 SAM)</h1>
+            <form id="calcFormSingle" onsubmit="event.preventDefault(); calculate_single_sam();">
+                <div class="form-group">
+                    <label for="sam_single">SAM Style (นาที/ชิ้น):</label>
+                    <input type="number" step="0.01" id="sam_single" required>
+                </div>
+                <div class="form-group">
+                    <label for="morningPeople_single">จำนวนคนทำงานช่วงเช้า (4 ชม.):</label>
+                    <input type="number" id="morningPeople_single" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="afternoonPeople_single">จำนวนคนทำงานช่วงบ่าย (4 ชม.):</label>
+                    <input type="number" id="afternoonPeople_single" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="otPeople_single">จำนวนคนทำงาน OT:</label>
+                    <input type="number" id="otPeople_single" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="otHours_single">ชั่วโมง OT/วัน (ใส่เฉพาะ ชม.โอที):</label>
+                    <input type="number" step="0.01" id="otHours_single" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="targetEff_single">เปอร์เซ็นต์ประสิทธิภาพที่ต้องการ (%):</label>
+                    <input type="number" step="0.01" id="targetEff_single" min="0" required>
+                    <p class="input-hint">(ค่าที่กรอกจะถูกบวกเพิ่ม 0.05% อัตโนมัติในการคำนวณ)</p>
+                </div>
+                <button type="button" class="calc-button" onclick="calculate_single_sam()">คำนวณ (1 SAM)</button>
+            </form>
+            <div id="result_single" class="result" role="alert" aria-live="assertive"></div>
+        </div>
+    </template>
+
+    <template id="dualSamCalculatorTemplate">
+        <div class="container">
+            <h1>คำนวณเป้าหมายผลผลิตรายวัน (2 SAM Styles)</h1>
+            <form id="calcForm_2sam" onsubmit="event.preventDefault(); calculate_2sam();">
+                <h2>ข้อมูลทั่วไป</h2>
+                <div class="form-group">
+                    <label for="targetEff_dual">เปอร์เซ็นต์ประสิทธิภาพที่ต้องการโดยรวม (%):</label>
+                    <input type="number" step="0.01" id="targetEff_dual" min="0" required>
+                    <p class="input-hint">(ค่าที่กรอกจะถูกบวกเพิ่ม 0.05% อัตโนมัติในการคำนวณ)</p>
+                </div>
+                <hr style="margin: 30px 0;">
+
+                <h2>SAM Style 1</h2>
+                <div class="form-group">
+                    <label for="sam1_value">SAM Style 1 (นาที/ชิ้น):</label>
+                    <input type="number" step="0.01" id="sam1_value" required>
+                </div>
+                <div class="form-group">
+                    <label for="sam1_numPeople">จำนวนคนทำงานสำหรับ SAM Style 1:</label>
+                    <input type="number" id="sam1_numPeople" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="sam1_startHour">ชั่วโมงเริ่มทำงานปกติ SAM Style 1 (0-7):</label>
+                    <input type="number" id="sam1_startHour" min="0" max="7" placeholder="เช่น 0 (แทนชั่วโมงแรก)" required>
+                    <p class="input-hint">ป้อนค่า 0 ถึง 7 (สำหรับวันทำงานปกติ 8 ชั่วโมง, ชั่วโมงที่ 0 คือชั่วโมงแรก)</p>
+                </div>
+                <div class="form-group">
+                    <label for="sam1_endHour">ชั่วโมงสิ้นสุดทำงานปกติ SAM Style 1 (1-8):</label>
+                    <input type="number" id="sam1_endHour" min="1" max="8" placeholder="เช่น 4 (สิ้นสุดที่ชั่วโมงที่ 4)" required>
+                    <p class="input-hint">ป้อนค่า 1 ถึง 8 (ต้องมากกว่าชั่วโมงเริ่ม, เช่น สิ้นสุดที่ชั่วโมงที่ 4 หมายถึงทำงานถึงสิ้นสุดชั่วโมงที่ 3)</p>
+                </div>
+                <div class="form-group">
+                    <label for="sam1_otHours">ชั่วโมง OT สำหรับ SAM Style 1 (ถ้ามี):</label>
+                    <input type="number" step="0.01" id="sam1_otHours" min="0" value="0" required>
+                </div>
+                <hr style="margin: 30px 0;">
+
+                <h2>SAM Style 2</h2>
+                <div class="form-group">
+                    <label for="sam2_value">SAM Style 2 (นาที/ชิ้น):</label>
+                    <input type="number" step="0.01" id="sam2_value" required>
+                </div>
+                <div class="form-group">
+                    <label for="sam2_numPeople">จำนวนคนทำงานสำหรับ SAM Style 2:</label>
+                    <input type="number" id="sam2_numPeople" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="sam2_startHour">ชั่วโมงเริ่มทำงานปกติ SAM Style 2 (0-7):</label>
+                    <input type="number" id="sam2_startHour" min="0" max="7" placeholder="เช่น 4 (แทนชั่วโมงที่ห้า)" required>
+                    <p class="input-hint">ป้อนค่า 0 ถึง 7</p>
+                </div>
+                <div class="form-group">
+                    <label for="sam2_endHour">ชั่วโมงสิ้นสุดทำงานปกติ SAM Style 2 (1-8):</label>
+                    <input type="number" id="sam2_endHour" min="1" max="8" placeholder="เช่น 8 (สิ้นสุดที่ชั่วโมงที่ 8)" required>
+                    <p class="input-hint">ป้อนค่า 1 ถึง 8 (ต้องมากกว่าชั่วโมงเริ่ม)</p>
+                </div>
+                <div class="form-group">
+                    <label for="sam2_otHours">ชั่วโมง OT สำหรับ SAM Style 2 (ถ้ามี):</label>
+                    <input type="number" step="0.01" id="sam2_otHours" min="0" value="0" required>
+                </div>
+
+                <button type="button" class="calc-button" onclick="calculate_2sam()">คำนวณเป้าหมาย (2 SAM)</button>
+            </form>
+            <div id="result_2sam" class="result" role="alert" aria-live="assertive"></div>
+        </div>
+    </template>
+
+    <script>
+        // JavaScript (calculate_single_sam, calculate_2sam, showCalculator) is identical to the original.
+        // No changes needed for the core logic as HTML element IDs are maintained.
+        const calculatorContainer = document.getElementById('calculatorContainer');
+        const singleSamTemplateEl = document.getElementById('singleSamCalculatorTemplate');
+        const dualSamTemplateEl = document.getElementById('dualSamCalculatorTemplate');
+        const btnShowSingle = document.getElementById('showSingleSamCalcBtn');
+        const btnShowDual = document.getElementById('showDualSamCalcBtn');
+
+        function showCalculator(type) {
+            calculatorContainer.innerHTML = ''; // Clear previous content
+            let contentNode;
+
+            btnShowSingle.classList.remove('active');
+            btnShowDual.classList.remove('active');
+
+            if (type === 'single') {
+                contentNode = singleSamTemplateEl.content.cloneNode(true);
+                btnShowSingle.classList.add('active');
+            } else if (type === 'dual') {
+                contentNode = dualSamTemplateEl.content.cloneNode(true);
+                btnShowDual.classList.add('active');
+            } else {
+                calculatorContainer.innerHTML = '<div class="container initial-message-container"><h1>กรุณาเลือกประเภทเครื่องคำนวณ</h1></div>';
+                return;
+            }
+            calculatorContainer.appendChild(contentNode);
+            // Optional: Scroll to the top of the calculator form after loading
+            // calculatorContainer.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // --- START: calculate_single_sam() function (for Single SAM Style) ---
+        function calculate_single_sam() {
+            const sam = parseFloat(document.getElementById('sam_single').value);
+            const morningPeople = parseFloat(document.getElementById('morningPeople_single').value);
+            const afternoonPeople = parseFloat(document.getElementById('afternoonPeople_single').value);
+            const otPeople = parseFloat(document.getElementById('otPeople_single').value);
+            const otHours = parseFloat(document.getElementById('otHours_single').value);
+            const targetEffInput = parseFloat(document.getElementById('targetEff_single').value);
+
+            const resultDiv = document.getElementById('result_single');
+            resultDiv.innerHTML = '';
+            resultDiv.className = 'result'; // Reset class
+
+            if (isNaN(sam) || isNaN(morningPeople) || isNaN(afternoonPeople) || isNaN(otPeople) || isNaN(otHours) || isNaN(targetEffInput)) {
+                resultDiv.className = 'result error-message';
+                resultDiv.innerHTML = `
+                    <h3>ข้อผิดพลาด:</h3>
+                    <p class="error-text">กรุณากรอกข้อมูลให้ครบทุกช่องด้วยตัวเลขที่ถูกต้อง</p>
+                `;
+                return;
+            }
+
+            let errorMessage = '';
+            if (sam <= 0) errorMessage = 'ค่า SAM Style ต้องมากกว่า 0';
+            else if (morningPeople < 0) errorMessage = 'จำนวนคนทำงานช่วงเช้าต้องไม่ติดลบ';
+            else if (afternoonPeople < 0) errorMessage = 'จำนวนคนทำงานช่วงบ่ายต้องไม่ติดลบ';
+            else if (otPeople < 0) errorMessage = 'จำนวนคนทำงาน OT ต้องไม่ติดลบ';
+            else if (otHours < 0) errorMessage = 'ชั่วโมง O.T. ต้องไม่ติดลบ';
+            else if (targetEffInput < 0) errorMessage = 'เปอร์เซ็นต์ประสิทธิภาพที่ต้องการต้องไม่ติดลบ';
+
+            if (errorMessage) {
+                resultDiv.className = 'result error-message';
+                resultDiv.innerHTML = `
+                    <h3>ข้อผิดพลาด:</h3>
+                    <p class="error-text smooth-blinking-text">${errorMessage}</p>
+                `;
+                return;
+            }
+
+            const totalNormalTime = (morningPeople * 4 * 60) + (afternoonPeople * 4 * 60);
+            const totalNormalTime2_6hr = (morningPeople * 4 * 60) + (afternoonPeople * 2 * 60); // 6-hour target logic
+            const totalOtTime = (otPeople * otHours * 60);
+            const totalTime = totalNormalTime + totalOtTime;
+
+            const expectedOutputAt100Eff = (sam > 0) ? (totalTime / sam) : 0;
+            const expectedOutputAt100Eff2_6hr = (sam > 0) ? (totalNormalTime2_6hr / sam) : 0;
+
+            const adjustedTargetEffPercentage = (targetEffInput + 0.05) / 100;
+
+            const requiredOutput = adjustedTargetEffPercentage * expectedOutputAt100Eff;
+            const requiredOutput2_6hr = adjustedTargetEffPercentage * expectedOutputAt100Eff2_6hr;
+
+            resultDiv.innerHTML = `
+                <h3>ผลลัพธ์ (1 SAM Style):</h3>
+                <p>ผลผลิตคาดหวัง (100%
