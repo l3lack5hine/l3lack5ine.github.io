@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>กำลังโหลดเครื่องคำนวณเป้าหมายผลผลิต...</title>
+    <style>
+        body {
+            font-family: 'Arial', 'Helvetica Neue', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f9;
+            color: #333;
+            text-align: center;
+        }
+        .loader {
+            border: 8px solid #f3f3f3; /* Light grey */
+            border-top: 8px solid #3498db; /* Blue */
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 2s linear infinite;
+            margin: 0 auto 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+    <script>
+        function detectAndRedirect() {
+            const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+            let isMobile = false;
+
+            // Basic mobile detection
+            if (/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|lx)|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i.test(userAgent)) {
+                isMobile = true;
+            }
+            // Basic tablet detection (some tablets might prefer desktop layout)
+            if (/android|ipad|playbook|silk/i.test(userAgent) && window.innerWidth <= 1024 && window.innerHeight <= 1024) {
+                 // If it's a tablet and screen size is not very large, consider it mobile-like for this calculator
+                isMobile = true;
+            }
+
+            // Override for very small desktop windows if needed, or purely rely on UA
+            if (window.innerWidth < 768 && !isMobile) { // If a desktop window is resized very small
+                // Decide if you still want to force mobile version or let desktop handle it.
+                // For this case, we'll lean towards mobile if the window is tiny.
+                // isMobile = true;
+            }
+
+
+            if (isMobile) {
+                window.location.href = "calculator_mobile.html";
+            } else {
+                window.location.href = "calculator_desktop.html";
+            }
+        }
+        // Run detection on window load
+        window.onload = detectAndRedirect;
+    </script>
+</head>
+<body>
+    <div>
+        <div class="loader"></div>
+        <h1>กำลังเตรียมเครื่องคำนวณ</h1>
+        <p>กรุณารอสักครู่ ระบบกำลังนำท่านไปยังเวอร์ชันที่เหมาะสมกับอุปกรณ์ของท่าน...</p>
+    </div>
+</body>
+</html>
