@@ -2,155 +2,517 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <title>เครื่องคำนวณเป้าหมายผลผลิต (Desktop - Mobile View)</title>
+    <title>เครื่องคำนวณเป้าหมายผลผลิต (Desktop Version - Toggle)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        /* --- Global Styles (นำมาจากเวอร์ชัน Mobile) --- */
+        /* --- Global Styles --- */
         body {
             font-family: 'Arial', 'Helvetica Neue', sans-serif;
-            padding: 0; /* Remove padding for full-width navigation */
+            padding: 0;
             margin: 0;
-            background-color: #f4f4f9;
-            color: #333;
-            line-height: 1.6;
+            background-color: #e9ecef;
+            color: #212529;
+            line-height: 1.7;
         }
 
-        /* --- Navigation (นำมาจากเวอร์ชัน Mobile) --- */
+        /* --- Navigation --- */
         .navigation-tabs {
             display: flex;
             justify-content: center;
-            background-color: #343a40; /* Dark background for tabs */
-            padding: 10px 0;
-            margin-bottom: 20px;
+            background-color: #343a40;
+            padding: 15px 0;
+            margin-bottom: 30px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
         }
         .navigation-tabs button {
-            background-color: #495057; /* Button color */
+            background-color: #495057;
             color: white;
-            padding: 12px 25px; /* Increased padding */
-            margin: 0 8px; /* Spacing between buttons */
+            padding: 15px 35px;
+            margin: 0 12px;
             border: none;
-            border-radius: 5px; /* Rounded corners */
-            font-size: 16px;
+            border-radius: 6px;
+            font-size: 18px;
             cursor: pointer;
-            transition: background-color 0.3s ease, box-shadow 0.3s ease;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.1s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.15);
         }
         .navigation-tabs button:hover {
-            background-color: #007bff; /* Lighter blue on hover */
+            background-color: #007bff;
+            transform: translateY(-2px);
         }
         .navigation-tabs button.active {
-            background-color: #007bff; /* Blue for active tab */
+            background-color: #007bff;
             font-weight: bold;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.25);
+            transform: translateY(-1px);
         }
 
-        /* --- Container (นำมาจากเวอร์ชัน Mobile) --- */
-        /* Desktop สามารถใช้ max-width ที่กว้างขึ้นได้เล็กน้อยถ้าต้องการ แต่ 750px ก็ยังดูดี */
-        .container {
-            max-width: 750px; /* หรือปรับเป็น 800px-900px ถ้าต้องการให้กว้างขึ้นบน desktop */
-            margin: 20px auto;
-            padding: 25px;
+        /* --- Container Styles --- */
+        #calculatorDisplayArea {
+             max-width: 1000px;
+             margin: 30px auto;
+        }
+        .initial-message-container,
+        .calculator-content .container { /* Apply common styles to the actual content containers */
+            padding: 35px;
             background-color: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
         }
-        .initial-message-container { /* Specific styling for the initial message */
+        .initial-message-container {
              text-align:center;
-             padding: 40px 20px;
-             /* หาก .container ด้านบนถูกปรับ max-width, ส่วนนี้อาจจะไม่ต้องมี box-shadow หรือ background ซ้ำ */
-             /* หรือจะให้ initial-message-container เป็น container หลักไปเลยก็ได้ */
+             /* padding already applied above */
         }
+        .initial-message-container h1 { font-size: 30px; margin-bottom: 15px;}
+        .initial-message-container p { font-size: 18px; }
 
-
-        /* --- Headings and Text (นำมาจากเวอร์ชัน Mobile) --- */
-        h1 {
-            font-size: 26px;
+        /* --- Headings and Text --- */
+        h1 { /* General h1, specific adjustments can be made inside containers */
+            font-size: 30px;
             text-align: center;
-            color: #2c3e50;
-            margin-bottom: 25px;
+            color: #1a2533;
+            margin-bottom: 30px;
         }
         h2 {
-            font-size: 20px;
-            color: #007bff;
-            margin-top: 30px;
-            margin-bottom: 15px;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 5px;
+            font-size: 24px;
+            color: #0069d9;
+            margin-top: 40px; /* Or adjust based on context */
+            margin-bottom: 20px;
+            border-bottom: 2px solid #dee2e6;
+            padding-bottom: 10px;
         }
-
+        .form-group { margin-bottom: 20px; }
         label {
             display: block;
-            margin-bottom: 6px;
-            font-size: 16px;
-            font-weight: bold;
-            color: #555;
+            margin-bottom: 8px;
+            font-size: 17px;
+            font-weight: 600;
+            color: #495057;
         }
         .input-hint {
-            font-size: 0.85em;
-            color: #666;
-            margin-top: -10px;
-            margin-bottom: 10px;
-        }
-
-        /* --- Form Elements (นำมาจากเวอร์ชัน Mobile) --- */
-        input[type="number"],
-        .calc-button {
-            width: 100%;
-            padding: 12px;
+            font-size: 0.9em;
+            color: #6c757d;
+            margin-top: -6px;
             margin-bottom: 15px;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 5px;
             box-sizing: border-box;
             font-size: 16px;
-            border: 1px solid #ddd;
+            border: 1px solid #ced4da;
             border-radius: 5px;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
-
         input[type="number"]:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 5px rgba(0,123,255,0.25);
+            border-color: #80bdff;
+            box-shadow: 0 0 0 0.25rem rgba(0,123,255,.25);
             outline: none;
         }
-
         .calc-button {
+            width: 100%;
+            padding: 15px;
             background-color: #17a2b8;
             color: white;
             border: none;
             cursor: pointer;
-            transition: background-color 0.2s ease-in-out, transform 0.1s ease;
-            margin-top: 10px;
+            transition: background-color 0.2s ease-in-out, transform 0.1s ease, box-shadow 0.2s ease;
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-
         .calc-button:hover {
             background-color: #138496;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            transform: translateY(-1px);
         }
         .calc-button:active {
-            transform: scale(0.98);
+            transform: scale(0.98) translateY(0px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-
-        /* --- Result Area (นำมาจากเวอร์ชัน Mobile) --- */
         .result {
-            margin-top: 25px;
-            padding: 20px;
-            background: #eef1f5;
-            border-left: 5px solid #007bff;
-            border-radius: 5px;
+            margin-top: 35px;
+            padding: 30px;
+            background: #f8f9fa;
+            border-left: 6px solid #007bff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
         }
         .result h3 {
             margin-top: 0;
-            color: #007bff;
+            margin-bottom: 20px;
+            color: #0056b3;
+            font-size: 22px;
         }
-         .result hr {
+        .result hr {
             border: 0;
             height: 1px;
-            background-color: #ccc;
-            margin: 15px 0;
+            background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0));
+            margin: 25px 0;
         }
-        .result p {
-            margin-bottom: 8px;
-        }
+        .result p { margin-bottom: 12px; font-size: 17px; }
         .result-block {
-            margin-bottom: 20px;
-            padding-bottom:10px;
-            border-bottom: 1px dashed #ccc;
+            margin-bottom: 25px;
+            padding-bottom:20px;
+            border-bottom: 1px dashed #ced4da;
         }
-        .result-block:last-child {
-            border-bottom: none;
+        .result-block:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .result-block h4 { font-size: 20px; color: #343a40; margin-bottom: 15px; }
+        .error-message { background: #f8d7da; border-left-color: #dc3545; }
+        .error-message h3 { color: #721c24 !important; }
+        .error-message p.error-text { color: #721c24 !important; font-weight: bold; }
+        @keyframes smooth-blink-effect { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+        .smooth-blinking-text {
+            animation-name: smooth-blink-effect;
+            animation-duration: 1.8s;
+            animation-iteration-count: infinite;
+            font-weight: bold;
+        }
+
+        .calculator-hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 768px) {
+            .navigation-tabs { flex-wrap: wrap; }
+            .navigation-tabs button { padding: 12px 25px; font-size: 16px; margin: 5px; }
+            #calculatorDisplayArea { /* Ensure this also gets responsive margin */
+                margin: 20px 15px;
+            }
+            /* .initial-message-container and .container already handled by #calculatorDisplayArea's child behavior or specific rules if needed */
+             .initial-message-container, .calculator-content .container {
+                padding: 25px;
+            }
+            h1 { font-size: 26px; }
+            h2 { font-size: 22px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="navigation-tabs">
+        <button id="showSingleSamCalcBtn" onclick="showCalculator('single')">คำนวณ SAM Style 1 อัน</button>
+        <button id="showDualSamCalcBtn" onclick="showCalculator('dual')">คำนวณ SAM Style 2 อัน</button>
+    </div>
+
+    <div id="calculatorDisplayArea">
+        <div id="initialMessageDisplay" class="initial-message-container">
+             <h1>กรุณาเลือกประเภทเครื่องคำนวณจากปุ่มด้านบน</h1>
+             <p>เลือก "SAM Style 1 อัน" สำหรับการคำนวณผลผลิตพื้นฐาน หรือ "SAM Style 2 อัน" สำหรับการคำนวณที่ซับซ้อนขึ้นโดยกำหนดเวลาทำงานและจำนวนคนแยกตาม SAM</p>
+        </div>
+
+        <div id="singleCalculatorDisplay" class="calculator-content calculator-hidden">
+            <div class="container">
+                <h1>คำนวณเป้าหมายผลผลิตรายวัน (1 SAM)</h1>
+                <form id="calcFormSingle" onsubmit="event.preventDefault(); calculate_single_sam();">
+                    <div class="form-group">
+                        <label for="sam_single">SAM Style (นาที/ชิ้น):</label>
+                        <input type="number" step="0.01" id="sam_single" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="morningPeople_single">จำนวนคนทำงานช่วงเช้า (4 ชม.):</label>
+                        <input type="number" id="morningPeople_single" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="afternoonPeople_single">จำนวนคนทำงานช่วงบ่าย (4 ชม.):</label>
+                        <input type="number" id="afternoonPeople_single" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="otPeople_single">จำนวนคนทำงาน OT:</label>
+                        <input type="number" id="otPeople_single" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="otHours_single">ชั่วโมง OT/วัน (ใส่เฉพาะ ชม.โอที):</label>
+                        <input type="number" step="0.01" id="otHours_single" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="targetEff_single">เปอร์เซ็นต์ประสิทธิภาพที่ต้องการ (%):</label>
+                        <input type="number" step="0.01" id="targetEff_single" min="0" required>
+                        <p class="input-hint">(ค่าที่กรอกจะถูกบวกเพิ่ม 0.05% อัตโนมัติในการคำนวณ)</p>
+                    </div>
+                    <button type="button" class="calc-button" onclick="calculate_single_sam()">คำนวณ (1 SAM)</button>
+                </form>
+                <div id="result_single" class="result" role="alert" aria-live="assertive"></div>
+            </div>
+        </div>
+
+        <div id="dualCalculatorDisplay" class="calculator-content calculator-hidden">
+            <div class="container">
+                <h1>คำนวณเป้าหมายผลผลิตรายวัน (2 SAM Styles)</h1>
+                <form id="calcForm_2sam" onsubmit="event.preventDefault(); calculate_2sam();">
+                    <h2>ข้อมูลทั่วไป</h2>
+                    <div class="form-group">
+                        <label for="targetEff_dual">เปอร์เซ็นต์ประสิทธิภาพที่ต้องการโดยรวม (%):</label>
+                        <input type="number" step="0.01" id="targetEff_dual" min="0" required>
+                        <p class="input-hint">(ค่าที่กรอกจะถูกบวกเพิ่ม 0.05% อัตโนมัติในการคำนวณ)</p>
+                    </div>
+                    <hr style="margin: 30px 0;">
+                    <h2>SAM Style 1</h2>
+                    <div class="form-group">
+                        <label for="sam1_value">SAM Style 1 (นาที/ชิ้น):</label>
+                        <input type="number" step="0.01" id="sam1_value" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="sam1_numPeople">จำนวนคนทำงานสำหรับ SAM Style 1:</label>
+                        <input type="number" id="sam1_numPeople" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="sam1_startHour">ชั่วโมงเริ่มทำงานปกติ SAM Style 1 (0-7):</label>
+                        <input type="number" id="sam1_startHour" min="0" max="7" placeholder="เช่น 0 (แทนชั่วโมงแรก)" required>
+                        <p class="input-hint">ป้อนค่า 0 ถึง 7 (สำหรับวันทำงานปกติ 8 ชั่วโมง, ชั่วโมงที่ 0 คือชั่วโมงแรก)</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="sam1_endHour">ชั่วโมงสิ้นสุดทำงานปกติ SAM Style 1 (1-8):</label>
+                        <input type="number" id="sam1_endHour" min="1" max="8" placeholder="เช่น 4 (สิ้นสุดที่ชั่วโมงที่ 4)" required>
+                        <p class="input-hint">ป้อนค่า 1 ถึง 8 (ต้องมากกว่าชั่วโมงเริ่ม, เช่น สิ้นสุดที่ชั่วโมงที่ 4 หมายถึงทำงานถึงสิ้นสุดชั่วโมงที่ 3)</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="sam1_otHours">ชั่วโมง OT สำหรับ SAM Style 1 (ถ้ามี):</label>
+                        <input type="number" step="0.01" id="sam1_otHours" min="0" value="0" required>
+                    </div>
+                    <hr style="margin: 30px 0;">
+                    <h2>SAM Style 2</h2>
+                    <div class="form-group">
+                        <label for="sam2_value">SAM Style 2 (นาที/ชิ้น):</label>
+                        <input type="number" step="0.01" id="sam2_value" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="sam2_numPeople">จำนวนคนทำงานสำหรับ SAM Style 2:</label>
+                        <input type="number" id="sam2_numPeople" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="sam2_startHour">ชั่วโมงเริ่มทำงานปกติ SAM Style 2 (0-7):</label>
+                        <input type="number" id="sam2_startHour" min="0" max="7" placeholder="เช่น 4 (แทนชั่วโมงที่ห้า)" required>
+                        <p class="input-hint">ป้อนค่า 0 ถึง 7</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="sam2_endHour">ชั่วโมงสิ้นสุดทำงานปกติ SAM Style 2 (1-8):</label>
+                        <input type="number" id="sam2_endHour" min="1" max="8" placeholder="เช่น 8 (สิ้นสุดที่ชั่วโมงที่ 8)" required>
+                        <p class="input-hint">ป้อนค่า 1 ถึง 8 (ต้องมากกว่าชั่วโมงเริ่ม)</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="sam2_otHours">ชั่วโมง OT สำหรับ SAM Style 2 (ถ้ามี):</label>
+                        <input type="number" step="0.01" id="sam2_otHours" min="0" value="0" required>
+                    </div>
+                    <button type="button" class="calc-button" onclick="calculate_2sam()">คำนวณเป้าหมาย (2 SAM)</button>
+                </form>
+                <div id="result_2sam" class="result" role="alert" aria-live="assertive"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get references to the display elements
+        const initialMessageDisplayEl = document.getElementById('initialMessageDisplay');
+        const singleCalculatorDisplayEl = document.getElementById('singleCalculatorDisplay');
+        const dualCalculatorDisplayEl = document.getElementById('dualCalculatorDisplay');
+
+        // Get references to buttons
+        const btnShowSingle = document.getElementById('showSingleSamCalcBtn');
+        const btnShowDual = document.getElementById('showDualSamCalcBtn');
+
+        // Log initial element fetching for debugging
+        // It's good practice to wrap this in DOMContentLoaded if script were in <head>
+        // but at the end of <body>, direct access is usually fine.
+        console.log("Script loaded. Initial elements:");
+        console.log("initialMessageDisplayEl:", initialMessageDisplayEl);
+        console.log("singleCalculatorDisplayEl:", singleCalculatorDisplayEl);
+        console.log("dualCalculatorDisplayEl:", dualCalculatorDisplayEl);
+        console.log("btnShowSingle:", btnShowSingle);
+        console.log("btnShowDual:", btnShowDual);
+
+        function showCalculator(type) {
+            console.log("showCalculator (toggle mode) called with type:", type);
+
+            // Ensure elements exist before trying to manipulate them
+            if (initialMessageDisplayEl) {
+                initialMessageDisplayEl.classList.add('calculator-hidden');
+            } else {
+                console.error("initialMessageDisplayEl is not found.");
+            }
+
+            if (btnShowSingle) btnShowSingle.classList.remove('active');
+            if (btnShowDual) btnShowDual.classList.remove('active');
+
+            if (singleCalculatorDisplayEl) singleCalculatorDisplayEl.classList.add('calculator-hidden');
+            if (dualCalculatorDisplayEl) dualCalculatorDisplayEl.classList.add('calculator-hidden');
+
+            if (type === 'single') {
+                if (singleCalculatorDisplayEl) {
+                    singleCalculatorDisplayEl.classList.remove('calculator-hidden');
+                    console.log("Showing Single SAM Calculator Display");
+                } else {
+                    console.error("singleCalculatorDisplayEl is not found for type 'single'.");
+                }
+                if (btnShowSingle) btnShowSingle.classList.add('active');
+            } else if (type === 'dual') {
+                if (dualCalculatorDisplayEl) {
+                    dualCalculatorDisplayEl.classList.remove('calculator-hidden');
+                    console.log("Showing Dual SAM Calculator Display");
+                } else {
+                    console.error("dualCalculatorDisplayEl is not found for type 'dual'.");
+                }
+                if (btnShowDual) btnShowDual.classList.add('active');
+            } else {
+                console.warn("Unknown calculator type for toggle:", type);
+                if (initialMessageDisplayEl) { // Reshow initial message if type is unknown
+                    initialMessageDisplayEl.classList.remove('calculator-hidden');
+                }
+            }
+        }
+
+        function calculate_single_sam() {
+            const sam = parseFloat(document.getElementById('sam_single').value);
+            const morningPeople = parseFloat(document.getElementById('morningPeople_single').value);
+            const afternoonPeople = parseFloat(document.getElementById('afternoonPeople_single').value);
+            const otPeople = parseFloat(document.getElementById('otPeople_single').value);
+            const otHours = parseFloat(document.getElementById('otHours_single').value);
+            const targetEffInput = parseFloat(document.getElementById('targetEff_single').value);
+            const resultDiv = document.getElementById('result_single');
+
+            if (!resultDiv) { console.error("calculate_single_sam: result_single div not found."); return; }
+            resultDiv.innerHTML = '';
+            resultDiv.className = 'result';
+
+            if (isNaN(sam) || isNaN(morningPeople) || isNaN(afternoonPeople) || isNaN(otPeople) || isNaN(otHours) || isNaN(targetEffInput)) {
+                resultDiv.className = 'result error-message';
+                resultDiv.innerHTML = `<h3>ข้อผิดพลาด:</h3><p class="error-text">กรุณากรอกข้อมูลให้ครบทุกช่องด้วยตัวเลขที่ถูกต้อง</p>`;
+                return;
+            }
+            let errorMessage = '';
+            if (sam <= 0) errorMessage = 'ค่า SAM Style ต้องมากกว่า 0';
+            else if (morningPeople < 0) errorMessage = 'จำนวนคนทำงานช่วงเช้าต้องไม่ติดลบ';
+            else if (afternoonPeople < 0) errorMessage = 'จำนวนคนทำงานช่วงบ่ายต้องไม่ติดลบ';
+            else if (otPeople < 0) errorMessage = 'จำนวนคนทำงาน OT ต้องไม่ติดลบ';
+            else if (otHours < 0) errorMessage = 'ชั่วโมง O.T. ต้องไม่ติดลบ';
+            else if (targetEffInput < 0) errorMessage = 'เปอร์เซ็นต์ประสิทธิภาพที่ต้องการต้องไม่ติดลบ';
+
+            if (errorMessage) {
+                resultDiv.className = 'result error-message';
+                resultDiv.innerHTML = `<h3>ข้อผิดพลาด:</h3><p class="error-text smooth-blinking-text">${errorMessage}</p>`;
+                return;
+            }
+            const totalNormalTime = (morningPeople * 4 * 60) + (afternoonPeople * 4 * 60);
+            const totalNormalTime2_6hr = (morningPeople * 4 * 60) + (afternoonPeople * 2 * 60);
+            const totalOtTime = (otPeople * otHours * 60);
+            const totalTime = totalNormalTime + totalOtTime;
+            const expectedOutputAt100Eff = (sam > 0) ? (totalTime / sam) : 0;
+            const expectedOutputAt100Eff2_6hr = (sam > 0) ? (totalNormalTime2_6hr / sam) : 0;
+            const adjustedTargetEffPercentage = (targetEffInput + 0.05) / 100;
+            const requiredOutput = adjustedTargetEffPercentage * expectedOutputAt100Eff;
+            const requiredOutput2_6hr = adjustedTargetEffPercentage * expectedOutputAt100Eff2_6hr;
+            resultDiv.innerHTML = `
+                <h3>ผลลัพธ์ (1 SAM Style):</h3>
+                <p>ผลผลิตคาดหวัง (100% Eff, รวม OT): <strong>${expectedOutputAt100Eff.toFixed(2)} ตัว</strong></p>
+                <p>ผลผลิตคาดหวัง (100% Eff, ณ 6 ชม.): <strong>${expectedOutputAt100Eff2_6hr.toFixed(2)} ตัว</strong></p>
+                <hr>
+                <p>เป้าหมาย Eff ที่ตั้งไว้: <strong>${targetEffInput.toFixed(2)}%</strong></p>
+                <p>เป้าหมาย Eff ที่ใช้คำนวณ (Input + 0.05%): <strong>${(adjustedTargetEffPercentage * 100).toFixed(2)}%</strong></p>
+                <p style="font-size: 1.2em; margin-top:15px;"><strong>เป้าหมาย ณ 6 ชม. (คำนวณจาก ${(adjustedTargetEffPercentage * 100).toFixed(2)}% Eff): <span style="color: #007bff; font-size: 1.3em;">${requiredOutput2_6hr.toFixed(2)} ตัว</span></strong></p>
+                <p style="font-size: 1.2em;"><strong>เป้าหมายรวมต่อวัน (คำนวณจาก ${(adjustedTargetEffPercentage * 100).toFixed(2)}% Eff): <span style="color: #007bff; font-size: 1.3em;">${requiredOutput.toFixed(2)} ตัว</span></strong></p>
+                <p style="margin-top: 20px;"><span style="color: #dc3545;" class="smooth-blinking-text"><strong>*** หมายเหตุ: เป้าหมายผลผลิตนี้ ได้ใช้ค่าประสิทธิภาพที่ผู้ใช้กรอกบวกเพิ่มอีก 0.05% ในการคำนวณแล้ว ***</strong></span></p>
+            `;
+        }
+
+        function calculate_2sam() {
+            const targetEffInput = parseFloat(document.getElementById('targetEff_dual').value);
+            const resultDiv = document.getElementById('result_2sam');
+            if (!resultDiv) { console.error("calculate_2sam: result_2sam div not found."); return; }
+            resultDiv.innerHTML = '';
+            resultDiv.className = 'result';
+
+            function getSamStyleInputs(styleNumber) {
+                const samValue = parseFloat(document.getElementById(`sam${styleNumber}_value`).value);
+                const numPeople = parseInt(document.getElementById(`sam${styleNumber}_numPeople`).value);
+                const startHour = parseInt(document.getElementById(`sam${styleNumber}_startHour`).value);
+                const endHour = parseInt(document.getElementById(`sam${styleNumber}_endHour`).value);
+                const otHours = parseFloat(document.getElementById(`sam${styleNumber}_otHours`).value);
+                if (isNaN(samValue) || isNaN(numPeople) || isNaN(startHour) || isNaN(endHour) || isNaN(otHours)) {
+                    return { error: `กรุณากรอกข้อมูลสำหรับ SAM Style ${styleNumber} ให้ครบทุกช่องด้วยตัวเลขที่ถูกต้อง` };
+                }
+                if (samValue <= 0) return { error: `SAM Style ${styleNumber}: ค่า SAM ต้องมากกว่า 0` };
+                if (numPeople < 0) return { error: `SAM Style ${styleNumber}: จำนวนคนต้องไม่ติดลบ` };
+                if (startHour < 0 || startHour > 7) return { error: `SAM Style ${styleNumber}: ชั่วโมงเริ่มทำงานปกติ ต้องอยู่ระหว่าง 0 ถึง 7`};
+                if (endHour < 1 || endHour > 8) return { error: `SAM Style ${styleNumber}: ชั่วโมงสิ้นสุดทำงานปกติ ต้องอยู่ระหว่าง 1 ถึง 8`};
+                if (endHour <= startHour) return { error: `SAM Style ${styleNumber}: ชั่วโมงสิ้นสุดต้องมากกว่าชั่วโมงเริ่ม` };
+                if (otHours < 0) return { error: `SAM Style ${styleNumber}: ชั่วโมง OT ต้องไม่ติดลบ` };
+                const normalDuration = endHour - startHour;
+                return { samValue, numPeople, startHour, endHour, otHours, normalDuration, isValid: true };
+            }
+
+            if (isNaN(targetEffInput) || targetEffInput < 0) {
+                resultDiv.className = 'result error-message';
+                resultDiv.innerHTML = `<h3>ข้อผิดพลาด:</h3><p class="error-text smooth-blinking-text">เปอร์เซ็นต์ประสิทธิภาพที่ต้องการต้องไม่ติดลบและเป็นตัวเลข</p>`;
+                return;
+            }
+            const sam1_data = getSamStyleInputs(1);
+            if (!sam1_data.isValid) {
+                resultDiv.className = 'result error-message';
+                resultDiv.innerHTML = `<h3>ข้อผิดพลาด:</h3><p class="error-text smooth-blinking-text">${sam1_data.error}</p>`;
+                return;
+            }
+            const sam2_data = getSamStyleInputs(2);
+            if (!sam2_data.isValid) {
+                resultDiv.className = 'result error-message';
+                resultDiv.innerHTML = `<h3>ข้อผิดพลาด:</h3><p class="error-text smooth-blinking-text">${sam2_data.error}</p>`;
+                return;
+            }
+            const adjustedTargetEffPercentage = (targetEffInput + 0.05) / 100;
+            function calculateStyleOutput(data, styleNumForDisplay) {
+                const workMinutesNormal = data.numPeople * data.normalDuration * 60;
+                const workMinutesOT = data.numPeople * data.otHours * 60;
+                const totalWorkMinutes = workMinutesNormal + workMinutesOT;
+                if (data.samValue <= 0) {
+                    if (totalWorkMinutes > 0) { return { error: `SAM Style ${styleNumForDisplay} มีเวลาทำงาน แต่ค่า SAM ไม่ถูกต้อง (ต้องมากกว่า 0)` }; }
+                    return { styleNumber: styleNumForDisplay, numPeople: data.numPeople, normalDuration: data.normalDuration, otHours: data.otHours, totalWorkMinutes: 0, expectedOutput100: 0, requiredOutput: 0, samValue: data.samValue };
+                }
+                if (totalWorkMinutes <= 0 && data.samValue > 0) {
+                     return { styleNumber: styleNumForDisplay, numPeople: data.numPeople, normalDuration: data.normalDuration, otHours: data.otHours, totalWorkMinutes:0, expectedOutput100:0, requiredOutput:0, samValue: data.samValue };
+                }
+                const expectedOutput100 = totalWorkMinutes / data.samValue;
+                const requiredOutput = adjustedTargetEffPercentage * expectedOutput100;
+                return { styleNumber: styleNumForDisplay, numPeople: data.numPeople, normalDuration: data.normalDuration, otHours: data.otHours, totalWorkMinutes, expectedOutput100, requiredOutput, samValue: data.samValue };
+            }
+            const results_sam1 = calculateStyleOutput(sam1_data, 1);
+            if (results_sam1.error) {
+                 resultDiv.className = 'result error-message';
+                 resultDiv.innerHTML = `<h3>ข้อผิดพลาด:</h3><p class="error-text smooth-blinking-text">${results_sam1.error}</p>`;
+                 return;
+            }
+            const results_sam2 = calculateStyleOutput(sam2_data, 2);
+            if (results_sam2.error) {
+                 resultDiv.className = 'result error-message';
+                 resultDiv.innerHTML = `<h3>ข้อผิดพลาด:</h3><p class="error-text smooth-blinking-text">${results_sam2.error}</p>`;
+                 return;
+            }
+            resultDiv.innerHTML = `
+                <h3>ผลลัพธ์การคำนวณ (2 SAM Styles):</h3>
+                <p>เป้าหมาย Eff ที่ตั้งไว้: <strong>${targetEffInput.toFixed(2)}%</strong></p>
+                <p>เป้าหมาย Eff ที่ใช้คำนวณ (Input + 0.05%): <strong>${(adjustedTargetEffPercentage * 100).toFixed(2)}%</strong></p>
+                <hr>
+                <div class="result-block">
+                    <h4>SAM Style 1 (SAM: ${results_sam1.samValue.toFixed(2)} นาที/ชิ้น)</h4>
+                    <p>จำนวนคน: ${results_sam1.numPeople} คน</p>
+                    <p>เวลาทำงานปกติ: ${results_sam1.normalDuration.toFixed(2)} ชั่วโมง (เริ่ม ชม. ${sam1_data.startHour} สิ้นสุดก่อน ชม. ${sam1_data.endHour})</p>
+                    <p>เวลา OT: ${results_sam1.otHours.toFixed(2)} ชั่วโมง</p>
+                    <p>เวลารวมผลิต SAM1: ${results_sam1.totalWorkMinutes.toFixed(2)} นาที</p>
+                    <p>ผลผลิตคาดหวัง @100% Eff: <strong>${results_sam1.expectedOutput100.toFixed(2)} ตัว</strong></p>
+                    <p style="font-size: 1.2em;">เป้าหมายผลผลิต SAM Style 1: <strong><span style="color: #007bff; font-size: 1.3em;">${results_sam1.requiredOutput.toFixed(2)} ตัว</span></strong></p>
+                </div>
+                <div class="result-block">
+                    <h4>SAM Style 2 (SAM: ${results_sam2.samValue.toFixed(2)} นาที/ชิ้น)</h4>
+                    <p>จำนวนคน: ${results_sam2.numPeople} คน</p>
+                    <p>เวลาทำงานปกติ: ${results_sam2.normalDuration.toFixed(2)} ชั่วโมง (เริ่ม ชม. ${sam2_data.startHour} สิ้นสุดก่อน ชม. ${sam2_data.endHour})</p>
+                    <p>เวลา OT: ${results_sam2.otHours.toFixed(2)} ชั่วโมง</p>
+                    <p>เวลารวมผลิต SAM2: ${results_sam2.totalWorkMinutes.toFixed(2)} นาที</p>
+                    <p>ผลผลิตคาดหวัง @100% Eff: <strong>${results_sam2.expectedOutput100.toFixed(2)} ตัว</strong></p>
+                    <p style="font-size: 1.2em;">เป้าหมายผลผลิต SAM Style 2: <strong><span style="color: #007bff; font-size: 1.3em;">${results_sam2.requiredOutput.toFixed(2)} ตัว</span></strong></p>
+                </div>
+                <p style="margin-top: 20px;"><span style="color: #dc3545;" class="smooth-blinking-text"><strong>*** หมายเหตุ: เป้าหมายผลผลิตนี้ ได้ใช้ค่าประสิทธิภาพที่ผู้ใช้กรอกบวกเพิ่มอีก 0.05% ในการคำนวณแล้ว ***</strong></span></p>
+            `;
+        }
+    </script>
+</body>
+</html>
