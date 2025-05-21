@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เกิดข้อผิดพลาด</title>
+    <style>
+        body { 
+            font-family: 'Arial', 'Helvetica Neue', sans-serif; 
+            text-align: center; 
+            padding: 50px; 
+            background-color: #f8d7da; /* สีพื้นหลังแดงอ่อน */
+            color: #721c24; /* สีตัวอักษรแดงเข้ม */
+        }
+        .container {
+            background-color: #f5c6cb; /* สีพื้นหลังของกล่องข้อความ */
+            border: 1px solid #f1b0b7;
+            border-radius: 8px;
+            padding: 20px;
+            display: inline-block;
+        }
+        h1 { 
+            color: #721c24; 
+            margin-bottom: 15px;
+        }
+        p {
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        #countdown {
+            font-weight: bold;
+        }
+    </style>
+    <script>
+        const REDIRECT_BACK_DELAY_MS = 5000; // 5 วินาที (5000 มิลลิวินาที)
+        // ค่า default ถ้าไม่มี query parameter หรือหาไม่เจอ
+        let returnToPage = 'index.html'; 
+
+        window.onload = function() {
+            const params = new URLSearchParams(window.location.search);
+            if (params.has('returnTo')) {
+                returnToPage = params.get('returnTo');
+            }
+
+            let seconds = REDIRECT_BACK_DELAY_MS / 1000;
+            const countdownElement = document.getElementById('countdown');
+            const returnLinkElement = document.getElementById('returnLink');
+
+            if (returnLinkElement) {
+                returnLinkElement.href = returnToPage;
+            }
+            
+            if (countdownElement) {
+                countdownElement.textContent = seconds;
+            }
+
+            const interval = setInterval(() => {
+                seconds--;
+                if (countdownElement) {
+                    countdownElement.textContent = seconds;
+                }
+                if (seconds <= 0) {
+                    clearInterval(interval);
+                    window.location.href = returnToPage;
+                }
+            }, 1000);
+
+            setTimeout(function() {
+                // เผื่อ interval ไม่ทำงาน หรือต้องการ fallback
+                if (seconds > 0) { // ตรวจสอบว่ายังไม่ถูก redirect โดย interval
+                   clearInterval(interval); // หยุด interval ก่อน redirect
+                   window.location.href = returnToPage;
+                }
+            }, REDIRECT_BACK_DELAY_MS + 500); // หน่วงเพิ่มเล็กน้อย
+        };
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>เกิดข้อผิดพลาด! 🚧</h1>
+        <p>คุณได้รีเฟรชหน้านี้หลายครั้งเกินไป</p>
+        <p>ระบบจะพยายามนำคุณกลับไปยังหน้าที่แล้วใน <span id="countdown">5</span> วินาที...</p>
+        <p>หากระบบไม่นำกลับไปอัตโนมัติ กรุณาคลิก <a id="returnLink" href="index.html">ที่นี่เพื่อกลับไป</a></p>
+    </div>
+</body>
+</html>

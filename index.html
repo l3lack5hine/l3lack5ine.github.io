@@ -15,59 +15,96 @@
             background-color: #f4f4f9;
             color: #333;
             text-align: center;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .loading-container {
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
         .loader {
-            border: 8px solid #f3f3f3; /* Light grey */
-            border-top: 8px solid #3498db; /* Blue */
+            border: 8px solid #e0e0e0;
+            border-top: 8px solid #3498db;
             border-radius: 50%;
             width: 60px;
             height: 60px;
-            animation: spin 2s linear infinite;
-            margin: 0 auto 20px auto;
+            animation: spin 1.5s linear infinite;
+            margin: 0 auto 25px auto;
         }
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        h1 {
+            font-size: 1.8em;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        p {
+            font-size: 1em;
+            color: #555;
+            line-height: 1.6;
+        }
     </style>
     <script>
+        const MAX_REFRESH_ATTEMPTS = 5;
+        const REFRESH_COUNT_KEY = 'loadingPageRefreshCount';
+        const ERROR_PAGE_URL = 'error.html'; // หน้าสำหรับแสดงข้อผิดพลาด
+        const CURRENT_LOADING_PAGE_URL = window.location.pathname.split('/').pop() || 'index.html'; // หรือชื่อไฟล์ปัจจุบัน
+
+        function handleRefreshDetection() {
+            let currentRefreshCount = parseInt(sessionStorage.getItem(REFRESH_COUNT_KEY) || '0');
+            currentRefreshCount++;
+
+            if (currentRefreshCount > MAX_REFRESH_ATTEMPTS) {
+                // รีเซ็ต counter ก่อนไปหน้า error เพื่อไม่ให้เกิด loop เมื่อกลับมา
+                sessionStorage.setItem(REFRESH_COUNT_KEY, '0');
+                window.location.href = ERROR_PAGE_URL + `?returnTo=${CURRENT_LOADING_PAGE_URL}`; // ส่งชื่อหน้าปัจจุบันไปด้วย
+                return false; // หยุดการทำงานของสคริปต์ที่เหลือในหน้านี้
+            } else {
+                sessionStorage.setItem(REFRESH_COUNT_KEY, currentRefreshCount.toString());
+                return true; // อนุญาตให้โหลดหน้าต่อไปตามปกติ
+            }
+        }
+
         function detectAndRedirect() {
             const userAgent = navigator.userAgent || navigator.vendor || window.opera;
             let isMobile = false;
 
-            // Basic mobile detection
             if (/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|lx)|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i.test(userAgent)) {
                 isMobile = true;
             }
-            // Basic tablet detection (some tablets might prefer desktop layout)
-            if (/android|ipad|playbook|silk/i.test(userAgent) && window.innerWidth <= 1024 && window.innerHeight <= 1024) {
-                 // If it's a tablet and screen size is not very large, consider it mobile-like for this calculator
-                isMobile = true;
+            
+            if (!isMobile && /android|ipad|playbook|silk/i.test(userAgent)) {
+                if (window.innerWidth <= 1024 && window.innerHeight <= 1024) {
+                    // isMobile = true; 
+                }
             }
 
-            // Override for very small desktop windows if needed, or purely rely on UA
-            if (window.innerWidth < 768 && !isMobile) { // If a desktop window is resized very small
-                // Decide if you still want to force mobile version or let desktop handle it.
-                // For this case, we'll lean towards mobile if the window is tiny.
-                // isMobile = true;
-            }
-
+            const targetMobileURL = "calculator_mobile.html";
+            const targetDesktopURL = "calculator_desktop.html";
 
             if (isMobile) {
-                window.location.href = "calculator_mobile.html";
+                window.location.href = targetMobileURL;
             } else {
-                window.location.href = "calculator_desktop.html";
+                window.location.href = targetDesktopURL;
             }
         }
-        // Run detection on window load
-        window.onload = detectAndRedirect;
+
+        window.onload = function() {
+            if (handleRefreshDetection()) {
+                // ถ้าไม่ถูก redirect ไปหน้า error ให้ทำงานตามปกติ
+                detectAndRedirect();
+            }
+        };
     </script>
 </head>
 <body>
-    <div>
+    <div class="loading-container">
         <div class="loader"></div>
-        <h1>กำลังเตรียมเครื่องคำนวณ</h1>
-        <p>กรุณารอสักครู่ ระบบกำลังนำท่านไปยังเวอร์ชันที่เหมาะสมกับอุปกรณ์ของท่าน...</p>
+        <h1>กำลังเตรียมเครื่องคำนวณ 💡</h1>
+        <p>กรุณารอสักครู่... ระบบกำลังนำท่านไปยังเวอร์ชันที่เหมาะสมกับอุปกรณ์ของท่าน</p>
     </div>
 </body>
 </html>
